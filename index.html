@@ -1,0 +1,2433 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPSI CUP 3 - Pendaftaran Pencak Silat 2026</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- PDF & Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script>
+        tailwind.config = { 
+            theme: { 
+                extend: { 
+                    colors: { 
+                        ipsiYellow: '#FFD700', 
+                        ipsiBlack: '#1a1a1a',
+                        ipsiRed: '#cc0000'
+                    } 
+                } 
+            } 
+        }
+    </script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-width: 320px;
+            overflow-x: hidden;
+        }
+
+        .container-max {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .silat-bg { 
+            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('logo ipsi3.jpeg'); 
+            background-size: cover; 
+            background-position: center; 
+        }
+
+        .silat-bg .container, .page-section .container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 12px;
+        }
+
+        #home {
+            min-height: 500px;
+            height: auto !important;
+            min-height: calc(100vh - 80px);
+            padding: 40px 0;
+            overflow: visible !important;
+        }
+
+        .silat-bg h2, .silat-bg p {
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .total-registrants-card {
+            display: inline-flex !important;
+            flex-wrap: wrap !important;
+            width: auto !important;
+            min-width: 130px !important;
+            max-width: 260px !important;
+            padding: 0.75rem 1rem !important;
+            font-size: 0.95rem !important;
+            justify-content: center !important;
+        }
+
+        .total-registrants-card p {
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        @media (max-width: 768px) {
+            .total-registrants-card {
+                width: 100% !important;
+                max-width: 100% !important;
+                text-align: center !important;
+            }
+
+            .total-registrants-card p {
+                font-size: 0.95rem !important;
+                white-space: normal !important;
+            }
+        }
+
+        .silat-bg h2, .silat-bg p, .silat-bg .bg-white, .silat-bg .flex {
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+        #home .countdown-wrapper {
+            display: flex !important;
+            justify-content: center !important;
+            flex-wrap: nowrap !important;
+            gap: 0.28rem !important;
+            margin-bottom: 0.8rem !important;
+            overflow-x: auto !important;
+            padding-bottom: 0.2rem !important;
+            -webkit-overflow-scrolling: touch !important;
+            padding-left: 0.15rem !important;
+            padding-right: 0.15rem !important;
+            width: calc(100% - 20px) !important;
+        }
+
+        #home .countdown-wrapper > div {
+            flex: 0 0 auto !important;
+            min-width: 65px !important;
+            max-width: 95px !important;
+            padding: 0.55rem !important;
+        }
+
+        #home .countdown-wrapper .countdown-block span {
+            font-size: 1.1rem !important;
+        }
+
+        #home .countdown-wrapper .countdown-block p {
+            font-size: 0.66rem !important;
+        }
+
+        #home .countdown-wrapper .countdown-block span {
+            font-size: 1.35rem !important;
+        }
+
+        #home .countdown-wrapper .countdown-block p {
+            font-size: 0.72rem !important;
+        }
+
+        @media (max-width: 768px) {
+            .silat-bg h2 { font-size: 2rem !important; }
+            .silat-bg p { font-size: 0.94rem !important; }
+            .silat-bg .container, .page-section .container { padding-left: 12px !important; padding-right: 12px !important; }
+            #home { min-height: auto !important; padding: 35px 0 !important; }
+            .silat-bg { background-position: center top !important; }
+            .countdown-wrapper > div { flex: 1 1 calc(50% - 0.5rem) !important; }
+        }
+
+@media print {
+            @page { size: A4 portrait; margin: 15mm; }
+            body { print-color-adjust: exact; }
+            .no-print { display: none !important; }
+            #strukContent table { font-size: 10px !important; width: 100% !important; }
+            #strukContent th, #strukContent td { padding: 4px !important; }
+        }
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+@media (max-width: 480px) {
+            /* Touch-friendly controls */
+            button, input, select, textarea, [role="button"] {
+                min-height: 44px !important;
+                padding: 12px 16px !important;
+                font-size: 16px !important;
+                touch-action: manipulation;
+            }
+            /* Forms & modals */
+            #section-konfirmasi-bayar input,
+            #section-konfirmasi-bayar label,
+            #section-konfirmasi-bayar button,
+            #bukaStrukModal input,
+            #bukaStrukModal label,
+            #bukaStrukModal button,
+            #bukaStrukModal h2,
+            #bukaStrukModal p {
+                color: #000 !important;
+            }
+            /* Modal responsiveness */
+        .fixed.inset-0 > div {
+                width: 95vw !important;
+                max-width: 95vw !important;
+                margin: 10px !important;
+            }
+            /* Navbar & dashboard */
+            nav .container,
+            #page-dashboard .container {
+                padding-left: 8px !important;
+                padding-right: 8px !important;
+            }
+            /* Overflow handling */
+            .overflow-auto { max-height: 50vh !important; }
+            table { font-size: 14px !important; }
+            /* Prevent zoom on input focus */
+            input:focus { font-size: 16px !important; }
+        }
+
+        /* Make input-athlete form fully vertical and non-overlap on all devices */
+        #section-input-atlet form {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 12px !important;
+        }
+        #section-input-atlet form > div {
+            width: 100% !important;
+            display: block !important;
+            float: none !important;
+            margin-bottom: 10px !important;
+        }
+        #section-input-atlet form label:not(.doc-checkbox-container) {
+            display: block !important;
+            margin-bottom: 4px !important;
+        }
+        #section-input-atlet form .doc-checkbox-container {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.5rem !important;
+            flex-wrap: nowrap !important;
+        }
+        #section-input-atlet form input,
+        #section-input-atlet form select {
+            width: 100% !important;
+            box-sizing: border-box !important;
+            display: block !important;
+        }
+
+        .doc-checkbox-container {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            gap: 0.5rem !important;
+            flex-wrap: nowrap !important;
+            width: 100% !important;
+        }
+        .doc-checkbox-container .doc-checkbox {
+            width: 14px !important;
+            height: 14px !important;
+            min-width: 14px !important;
+            min-height: 14px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            vertical-align: middle !important;
+            accent-color: #2563eb !important;
+            display: inline-flex !important;
+        }
+        .doc-checkbox-container span {
+            display: inline-block !important;
+            margin: 0 !important;
+            line-height: 1.2 !important;
+        }
+
+        /* PDF Embed for Berita */
+        .pdf-embed {
+            width: 100%;
+            height: 500px;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        @media (max-width: 768px) {
+            .pdf-embed {
+                height: 350px;
+            }
+        }
+        /* Ensure black text reliability */
+        #section-konfirmasi-bayar *,
+        #bukaStrukModal * {
+            color: #000 !important;
+        }
+
+        /* Dashboard Admin Responsif */
+        #page-dashboard .container,
+        #page-dashboard .dashboard-section,
+        #page-dashboard .dashboard-section > div,
+        #page-dashboard .grid {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        #page-dashboard .grid-cols-1,
+        #page-dashboard .grid-cols-2,
+        #page-dashboard .grid-cols-3,
+        #page-dashboard .grid-cols-4 {
+            display: grid !important;
+            grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+            gap: 1rem !important;
+        }
+
+        /* Admin modal widget card layout */
+        #adminModal .grid.grid-cols-4 {
+            display: grid !important;
+            grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+            gap: 0.75rem !important;
+        }
+
+        @media (min-width: 768px) {
+            #adminModal .grid.grid-cols-4 {
+                grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            }
+        }
+
+        .dashboard-section .p-6,
+        .dashboard-section .bg-white,
+        .dashboard-section .shadow-xl {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 auto !important;
+            padding: 0.75rem !important;
+        }
+
+        @media (min-width: 768px) {
+            #page-dashboard .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+            #page-dashboard .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+        }
+    </style>
+
+</head>
+<body class="bg-gray-50 font-sans">
+
+    <!-- NAVBAR -->
+    <nav class="bg-ipsiBlack text-white sticky top-0 z-50 shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="goHome()">
+                <img src="Logo ipsi ofc.png" alt="Logo IPSI" class="h-10 w-10 object-contain rounded bg-white p-1">
+                <div>
+                    <h1 class="text-xl font-bold text-ipsiYellow">IPSI</h1>
+                    <p class="text-xs text-gray-300">Kabupaten Pekalongan</p>
+                </div>
+            </div>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-4 items-center">
+                <a href="#" onclick="goHome()" class="hover:text-ipsiYellow transition">Beranda</a>
+                <a href="#jadwal" onclick="goHome()" class="hover:text-ipsiYellow transition">Jadwal</a>
+                <a href="#" onclick="showPage('page-berita')" class="hover:text-ipsiYellow transition">Berita</a>
+                <button onclick="openBukaStrukModal()" class="bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700 transition"><i class="fas fa-file-download"></i> Bukti Pendaftaran </button>
+                <button onclick="openRiwayatModal()" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition"><i class="fas fa-history"></i> Riwayat</button>
+                <button id="adminPanelBtn" onclick="openAdminPanel()" class="bg-blue-600 text-white px-4 py-1 rounded font-bold hover:bg-blue-700 transition hidden"><i class="fas fa-cogs mr-1"></i>Admin Panel</button>
+                <button id="loginBtn" onclick="toggleLogin()" class="bg-ipsiYellow text-black px-4 py-1 rounded font-bold hover:bg-yellow-400 transition">Login Official</button>
+            </div>
+            
+            <!-- Mobile Hamburger Button -->
+            <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="md:hidden text-white p-2">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div id="mobileMenu" class="fixed inset-0 bg-black bg-opacity-95 z-50 hidden" style="display: none;">
+        <div class="flex flex-col h-full">
+            <div class="bg-ipsiBlack p-4 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <img src="Logo ipsi ofc.png" alt="Logo IPSI" class="h-8 w-8 object-contain rounded bg-white p-1">
+                    <span class="text-ipsiYellow font-bold">IPSI Menu</span>
+                </div>
+                <button onclick="toggleMobileMenu()" class="text-white p-2"><i class="fas fa-times text-2xl"></i></button>
+            </div>
+            <div class="flex-1 overflow-y-auto py-4">
+                <a href="#" onclick="goHome(); toggleMobileMenu()" class="block px-6 py-4 text-white text-lg hover:bg-ipsiYellow hover:text-black border-b border-gray-700 transition"><i class="fas fa-home w-8"></i> Beranda</a>
+                <a href="#" onclick="goHome(); toggleMobileMenu()" class="block px-6 py-4 text-white text-lg hover:bg-ipsiYellow hover:text-black border-b border-gray-700 transition"><i class="fas fa-calendar-alt w-8"></i> Jadwal</a>
+                <button onclick="showPage('page-berita'); toggleMobileMenu();" class="w-full text-left px-6 py-4 text-white text-lg hover:bg-ipsiYellow hover:text-black border-b border-gray-700 transition"><i class="fas fa-newspaper w-8"></i> Berita</button>
+                <button onclick="openBukaStrukModal(); toggleMobileMenu();" class="w-full text-left px-6 py-4 text-white text-lg hover:bg-purple-600 hover:text-white border-b border-gray-700 transition"><i class="fas fa-file-download w-8"></i> Bukti Pendaftaran</button>
+                <button id="adminPanelBtnMobile" onclick="openAdminPanel(); toggleMobileMenu();" class="w-full text-left px-6 py-4 text-white text-lg hover:bg-blue-600 hover:text-white border-b border-gray-700 transition hidden"><i class="fas fa-cogs w-8"></i> Admin Panel</button>
+                <button onclick="openRiwayatModal(); toggleMobileMenu();" class="w-full text-left px-6 py-4 text-white text-lg hover:bg-ipsiYellow hover:text-black border-b border-gray-700 transition"><i class="fas fa-history w-8"></i> Riwayat</button>
+            </div>
+            <div class="p-4 bg-gray-900">
+                <button id="loginBtnMobile" onclick="toggleMobileMenu(); toggleLogin();" class="w-full bg-ipsiYellow text-black py-3 px-4 rounded font-bold hover:bg-yellow-400 transition text-lg"><i class="fas fa-sign-in-alt mr-2"></i> Login Official</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HALAMAN: BERANDA -->
+    <div id="page-home" class="page-section active">
+        <!-- HERO -->
+        <section id="home" class="silat-bg h-[600px] flex items-center justify-center text-center text-white relative">
+            <div class="container mx-auto px-4">
+                <h2 class="text-5xl md:text-7xl font-bold mb-4 text-ipsiYellow drop-shadow-lg">IPSI CUP 3</h2>
+                <p class="text-xl md:text-2xl max-w-3xl mx-auto mb-6">Kejuaraan Pencak Silat Pelajar Kabupaten Pekalongan Tahun 2026 merupakan Seleksi Atlet cabang olahraga pencak silat yang akan mewakili kabupaten Pekalongan pada Pekan Olahraga Pelajar Daerah (POPDA) yang diselenggarakan oleh Pemerintah Provinsi Jawa Tengah Tahun 2026 sesuai dengan ketentuan dan ketersediaan kuota pengiriman peserta yang ditetapkan Pemerintah Kabupaten Pekalongan</p>
+                
+                <div class="bg-red-100 border border-red-300 text-red-800 p-3 rounded mb-4 font-bold inline-block text-center max-w-xl">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>BATAS AKHIR PENDAFTARAN
+                </div>
+                <div class="countdown-wrapper mb-8">
+                    <div class="bg-black bg-opacity-50 p-3 rounded-lg border border-ipsiYellow text-center countdown-block"><span id="days" class="text-2xl md:text-3xl font-bold">00</span><p class="text-xs md:text-sm">Hari</p></div>
+                    <div class="bg-black bg-opacity-50 p-3 rounded-lg border border-ipsiYellow text-center countdown-block"><span id="hours" class="text-2xl md:text-3xl font-bold">00</span><p class="text-xs md:text-sm">Jam</p></div>
+                    <div class="bg-black bg-opacity-50 p-3 rounded-lg border border-ipsiYellow text-center countdown-block"><span id="minutes" class="text-2xl md:text-3xl font-bold">00</span><p class="text-xs md:text-sm">Menit</p></div>
+                    <div class="bg-black bg-opacity-50 p-3 rounded-lg border border-ipsiYellow text-center countdown-block"><span id="seconds" class="text-2xl md:text-3xl font-bold">00</span><p class="text-xs md:text-sm">Detik</p></div>
+                </div>
+                <div class="total-registrants-card bg-white text-black p-4 rounded shadow-lg inline-block"><p class="font-bold">Total Pendaftar: <span id="totalRegistrants">0</span> Atlet</p></div>
+            </div>
+        </section>
+
+        <!-- KETUA IPSI -->
+        <section class="py-12 bg-white">
+            <div class="container mx-auto px-4 flex flex-col md:flex-row items-center gap-8">
+                <div class="w-full md:w-1/3"><img src="ketua ipsi.jpg.jpeg" alt="Ketua IPSI" class="rounded-lg shadow-xl w-full object-cover h-[400px]"></div>
+                <div class="w-full md:w-2/3">
+                    <h3 class="text-3xl font-bold text-ipsiBlack mb-4">Salam Olahraga!</h3>
+                    <blockquote class="text-xl italic text-gray-600 border-l-4 border-ipsiYellow pl-4">"Pencak Silat adalah budaya bangsa. Mari kita lestarikan dan kembangkan untuk menciptakan generasi penerus yang tangguh, disiplin, dan berprestasi."</blockquote>
+                    <p class="mt-4 font-bold text-lg">-H. Ruben R Prabu Faza, SH</p>
+                    <p class="font-bold text-lg"># Ketua IPSI Kabupaten Pekalongan</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- JADWAL -->
+        <section id="jadwal" class="py-12 bg-gray-200">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-8 text-ipsiBlack">Jadwal Pelaksanaan IPSI CUP 3</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-blue-500">
+                        <div class="text-center mb-4"><i class="fas fa-user-plus text-4xl text-blue-500 mb-2"></i><h3 class="text-xl font-bold">Pendaftaran</h3></div>
+                        <div class="text-center"><p class="text-2xl font-bold text-blue-600">17 Maret - 11 April</p><p class="text-sm text-gray-500">2026</p></div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-yellow-500">
+                        <div class="text-center mb-4"><i class="fas fa-file-signature text-4xl text-yellow-500 mb-2"></i><h3 class="text-xl font-bold">Technical Meeting</h3></div>
+                        <div class="text-center"><p class="text-2xl font-bold text-yellow-600">12 April</p><p class="text-sm text-gray-500">2026</p></div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-red-500">
+                        <div class="text-center mb-4"><i class="fas fa-trophy text-4xl text-red-500 mb-2"></i><h3 class="text-xl font-bold">Pelaksanaan</h3></div>
+                        <div class="text-center"><p class="text-2xl font-bold text-red-600">17 - 19 April</p><p class="text-sm text-gray-500">2026</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BERITA / INFORMASI -->
+        <section class="py-12 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-8 text-ipsiBlack">Berita & Unduhan</h2>
+                <div id="newsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Berita akan dimuat di sini via JS -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- HALAMAN: BERITA -->
+    <div id="page-berita" class="page-section">
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold text-center mb-8 text-ipsiBlack">Berita & Informasi</h2>
+            
+            <!-- News Tabs -->
+            <div class="flex flex-wrap justify-center gap-4 mb-8">
+                <button onclick="switchNewsTab('semua')" class="news-tab-btn px-4 py-2 bg-ipsiBlack text-white rounded font-bold" data-tab="semua">Semua</button>
+                <button onclick="switchNewsTab('poster')" class="news-tab-btn px-4 py-2 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300" data-tab="poster">Poster</button>
+                <button onclick="switchNewsTab('bagan')" class="news-tab-btn px-4 py-2 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300" data-tab="bagan">Bagan</button>
+            </div>
+
+            <!-- News Content -->
+            <div id="newsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- News cards will be loaded here -->
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HALAMAN: DASHBOARD OFFICIAL (SETELAH LOGIN) -->
+    <div id="page-dashboard" class="page-section">
+        <div class="container mx-auto px-4 py-8">
+            <!-- Dashboard Header -->
+            <div class="bg-ipsiBlack text-white p-6 rounded-t-lg flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-ipsiYellow">PANEL PENDAFTARAN</h2>
+                    <p class="text-gray-300">Selamat Datang Bro! <span id="userName" class="text-white font-bold"></span> | <span id="userPerguruan"></span></p>
+                </div>
+                <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"><i class="fas fa-sign-out-alt mr-2"></i> Keluar</button>
+            </div>
+
+            <!-- Dashboard Menu -->
+            <div class="bg-white rounded-b-lg shadow-xl p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Menu 1: Input Atlet -->
+                    <div onclick="showDashboardSection('input-atlet')" class="bg-gradient-to-br from-blue-500 to-blue-700 text-white p-6 rounded-lg cursor-pointer hover:from-blue-600 hover:to-blue-800 transition transform hover:scale-105 shadow-lg">
+                        <div class="text-center">
+                            <i class="fas fa-user-plus text-5xl mb-4"></i>
+                            <h3 class="text-xl font-bold">Pendaftaran</h3>
+                            <p class="text-sm opacity-80">Input Data Atlet </Data></p>
+                        </div>
+                    </div>
+
+                    <!-- Menu 2: Konfirmasi Pembayaran -->
+                    <div onclick="showDashboardSection('konfirmasi-bayar')" class="bg-gradient-to-br from-blue-500 to-blue-700 text-white p-6 rounded-lg cursor-pointer hover:from-blue-600 hover:to-blue-800 transition transform hover:scale-105 shadow-lg">
+                        <div class="text-center">
+                            <i class="fas fa-credit-card text-5xl mb-4"></i>
+                            <h3 class="text-xl font-bold">Konfirmasi Pendaftaran</h3>
+                            <p class="text-sm opacity-80">Konfirmasi Kode Pendaftaran</p>
+                        </div>
+                    </div>
+
+                    <!-- Menu 3: Konfirmasi Pembayaran (SWAPPED) -->
+                    <div onclick="openInvoiceModal()" class="bg-gradient-to-br from-blue-500 to-blue-700 text-white p-6 rounded-lg cursor-pointer hover:from-blue-600 hover:to-blue-800 transition transform hover:scale-105 shadow-lg">
+                        <div class="text-center">
+                            <i class="fas fa-receipt text-5xl mb-4"></i>
+                            <h3 class="text-xl font-bold">Konfirmasi Pembayaran </h3>
+                            <p class="text-sm opacity-80">Setelah Transfer</p>
+                        </div>
+                    </div>
+
+                    <!-- Menu 4: Buka Struk (SWAPPED) -->
+                    <div onclick="openBukaStrukModalFromDashboard()" class="bg-gradient-to-br from-orange-400 to-orange-600 text-white p-6 rounded-lg cursor-pointer hover:from-orange-500 hover:to-orange-700 transition transform hover:scale-105 shadow-lg">
+                        <div class="text-center">
+                            <i class="fas fa-file-download text-5xl mb-4"></i>
+                            <h3 class="text-xl font-bold">Bukti Pendaftaran</h3>
+                            <p class="text-sm opacity-80">Download Bukti  Pendaftaran</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Input Atlet -->
+                <div id="section-input-atlet" class="dashboard-section">
+                    <h3 class="font-bold text-lg mb-4 border-b pb-2 text-blue-600"><i class="fas fa-user-plus mr-2"></i>Formulir Pendaftaran Atlet</h3>
+                    <form id="athleteForm" onsubmit="addAthlete(event)" class="flex flex-col gap-4">
+                        <div class="w-full"><label class="block text-sm font-bold mb-1">Email Official</label><input type="email" id="formEmailOfficial" required class="w-full border p-2 rounded" placeholder="official@example.com"></div>
+                        <div class="w-full"><label class="block text-sm font-bold mb-1">Nama Lengkap Atlet</label><input type="text" id="formName" required class="w-full border p-2 rounded"></div>
+                        <div class="w-full"><label class="block text-sm font-bold mb-1">Tempat, Tanggal Lahir</label><input type="text" id="formTtl" required class="w-full border p-2 rounded" placeholder="Contoh: Pekalongan, 15 Januari 2012"></div>
+                        
+                        <div><label class="block text-sm font-bold mb-1">Jenis Kelamin</label>
+                            <select id="formGender" class="w-full border p-2 rounded">
+                                <option value="Laki-laki">Laki-laki</option>
+                                <option value="Perempuan">Perempuan</option>
+                            </select>
+                        </div>
+                        
+                        <div><label class="block text-sm font-bold mb-1">Kategori Pertandingan</label>
+                            <select id="formCategory" onchange="toggleFisik()" class="w-full border p-2 rounded">
+                                <option value="Tanding">Tanding</option>
+                                <option value="Jurus">Jurus Tunggal Baku IPSI</option>
+                                <option value="Jurus">Jurus Tunggal Bebas</option>
+                            </select>
+                        </div>
+                        
+                        <div><label class="block text-sm font-bold mb-1">Kelompok Umur</label>
+                            <select id="formAgeGroup" class="w-full border p-2 rounded">
+                                <option value="Usia Dini 2">Usia Dini 2</option>
+                                <option value="Pra Remaja">Pra Remaja</option>
+                                <option value="Remaja">Remaja</option>
+                            </select>
+                        </div>
+                        
+                        <div><label class="block text-sm font-bold mb-1">Kelas Tanding</label>
+                            <select id="formKelas" class="w-full border p-2 rounded">
+                                <option value="-">-</option>
+                                <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+                                <option value="D">D</option><option value="E">E</option><option value="F">F</option>
+                                <option value="G">G</option><option value="H">H</option><option value="I">I</option>
+                                <option value="J">J</option><option value="K">K</option><option value="L">L</option>
+                                <option value="M">M</option><option value="N">N</option><option value="O">O</option>
+                                <option value="P">P</option><option value="Q">Q</option><option value="R">R</option>
+                                <option value="S">S</option><option value="Open">Open</option>
+                            </select>
+                        </div>
+                        
+                        <div id="fisikContainer" class="col-span-2 bg-yellow-50 p-4 rounded border border-yellow-200 hidden">
+                            <h4 class="font-bold text-sm mb-2 text-yellow-800">Data Fisik (Khusus Tanding)</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-sm font-bold mb-1">Berat Badan (kg)</label><input type="number" step="0.1" id="formBb" class="w-full border p-2 rounded"></div>
+                                <div><label class="block text-sm font-bold mb-1">Tinggi Badan (cm)</label><input type="number" id="formTb" class="w-full border p-2 rounded"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-span-2"><label class="block text-sm font-bold mb-1">Asal Sekolah</label><input type="text" id="formSchool" required class="w-full border p-2 rounded"></div>
+                        <div><label class="block text-sm font-bold mb-1">NISN</label><input type="number" id="formNisn" required class="w-full border p-2 rounded"></div>
+                        <div><label class="block text-sm font-bold mb-1">Kelas Sekolah</label><input type="text" id="formKelasSekolah" required class="w-full border p-2 rounded"></div>
+                        <div><label class="block text-sm font-bold mb-1">NIK</label><input type="number" id="formNik" required class="w-full border p-2 rounded"></div>
+
+                        <div class="col-span-2">
+                            <div class="bg-blue-50 p-4 rounded border border-blue-200">
+                                <h4 class="font-bold text-sm mb-2 text-blue-800"><i class="fas fa-link mr-2"></i>LINK DOKUMEN (GOOGLE DRIVE)</h4>
+                                <p class="text-sm text-gray-600 mb-3">Paste link folder Google Drive (KK ASLI, AKTA ASLI, NISN, IJAZAH ASLI, FOTO BG MERAH). Pastikan pengelolaan akses bagikan pada siapa saja yang memiliki link!</p>
+                                <input type="url" id="docLink" placeholder="https://drive.google.com/..." class="w-full border p-2 rounded mb-2" required>
+                                <div class="bg-yellow-50 p-2 rounded border border-yellow-200 mb-2 text-xs">
+                                    <i class="fas fa-exclamation-triangle mr-1"></i> <strong>PERINGATAN:</strong> Link harus bisa diakses publik!
+                                </div>
+                                <label class="doc-checkbox-container cursor-pointer">
+                                    <input type="checkbox" id="docUploadConfirmed" class="doc-checkbox" required style="width:15px !important; height:15px !important; min-width:15px !important; min-height:15px !important; margin-right:8px !important;" >
+                                    <span class="text-sm text-gray-700">Saya mengkonfirmasi dokumen asli sudah diupload dan link dibagikan.</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-span-2"><button type="submit" class="w-full bg-ipsiBlack text-white py-3 rounded hover:bg-gray-800 font-bold"><i class="fas fa-plus mr-2"></i> SIMPAN DAN TAMBAHKAN</button></div>
+                    </form>
+
+                    <!-- Cart Section -->
+                    <div class="mt-8 bg-gray-50 p-4 rounded-lg">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-lg">Daftar Atlet (<span id="cartCount">0</span> Atlet)</h3>
+                        </div>
+                        <div class="bg-white p-4 rounded mb-4 max-h-60 overflow-y-auto">
+                            <ul id="cartList" class="text-sm space-y-2"></ul>
+                            <div class="mt-4 border-t pt-2 text-right">
+                                <p class="font-bold">Total: <span class="text-red-600">Rp <span id="cartTotal">0</span></span></p>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <button onclick="generatePaymentCode()" id="generateCodeBtn" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed font-medium mb-3" disabled>
+                                <i class="fas fa-barcode mr-2"></i>Buat Kode Pendaftaran
+                            </button>
+                            <div id="paymentCodeDisplay" class="hidden bg-green-100 border-2 border-green-500 p-4 rounded-lg text-center mb-4">
+                                <p class="text-sm text-green-800 font-bold mb-1">KODE PENDAFTARAN:</p>
+                                <p id="generatedPaymentCode" class="text-xl md:text-2xl font-bold text-green-700 tracking-widest mb-1"></p>
+                                <p class="text-xs text-green-600">SALIN DAN SIMPAN KODE INI! GUNAKAN UNTUK MENGKONFIRMASI PENDAFTARAN </p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-red-50 p-4 rounded border border-red-200 mb-4">
+                            <h4 class="font-bold text-red-800 mb-2"><i class="fas fa-money-bill-wave mr-2"></i>REKENING</h4>
+                            <p class="text-sm mb-1">Transfer ke:</p>
+                            <p class="font-bold text-lg text-blue-800">BRI | 3029-0108-1857-534</p>
+                            <p class="text-sm">a.n NAFISAH AMALINA</p>
+                            <p class="text-xs text-red-600 mt-2"><i class="fas fa-exclamation-triangle"></i> TIDAK MENERIMA TUNAI</p>
+                            <p class="text-xs text-red-600 mt-2"><i class="fas fa-exclamation-triangle"></i> LAMPIRKAN KODE PENDAFTARAN DI KETERANGAN KETIKA MELAKUKAN TRANSAKSI</p>
+                        </div>
+                        
+                        <button onclick="showCheckout()" id="checkoutBtn" class="w-full bg-green-600 text-white py-3 rounded hover:bg-green-700 font-bold shadow-lg disabled:bg-gray-400" disabled><i class="fas fa-shopping-cart mr-2"></i> DAFTAR </button>
+                    </div>
+                </div>
+
+                <!-- Section: Konfirmasi Pembayaran -->
+                <div id="section-konfirmasi-bayar" class="dashboard-section hidden">
+                    <h3 class="font-bold text-lg mb-4 border-b pb-2 text-blue-600"><i class="fas fa-credit-card mr-2"></i>Konfirmasi Pendaftaran</h3>
+                    
+                    <div class="bg-gradient-to-r from-blue-50 to-blue-200 rounded-lg p-8 text-black mb-6 shadow-lg">
+                        <div class="text-center mb-6">
+                            <i class="fas fa-money-check-alt text-6xl mb-4"></i>
+                            <h4 class="text-2xl font-bold">KONFIRMASI PENDAFTARAN</h4>
+                        </div>
+                        
+                        <div class="max-w-md mx-auto bg-white rounded-lg p-6">
+                            <form onsubmit="confirmPayment(event)">
+                                <div class="mb-4">
+                                    <label class="block text-sm font-bold mb-1 text-black">MASUKKAN KODE PENDAFTARAN</label>
+                                    <input type="text" id="paymentCodeInput" required class="w-full border-2 border-gray-300 p-3 rounded text-center text-lg tracking-widest" placeholder="CONTOH: IPSI3-28868451">
+                                </div>
+                                <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded font-bold hover:bg-blue-700"><i class="fas fa-check mr-2"></i> Konfirmasi Pendaftaran </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                        <h4 class="font-bold text-blue-800"><i class="fas fa-info-circle mr-2"></i>Cara Konfirmasi:</h4>
+                        <ol class="list-decimal list-inside text-sm text-gray-700 mt-2">
+                            <li>Transfer sesuai nominal ke rekening BRI (jika belum)</li>
+                            <li>Lampirkan kode pendaftaran yang ada di bukti pendaftaran</li>
+                            <li>Lampirkan id transaksi atau nomor invoice</li>
+                            <li>Klik tombol konfirmasi</li>
+                            <li>Perhatikan Perubahan Status</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: LOGIN -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md relative">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
+            <div class="text-center mb-6">
+                <img src="Logo ipsi ofc.png" alt="Logo" class="h-16 mx-auto mb-4">
+                <h2 class="text-2xl font-bold">Login Official</h2>
+                <p class="text-sm text-gray-500">Masukkan nama dan kode verifikasi untuk mengakses panel pendaftaran</p>
+            </div>
+            
+            <!-- Security Status -->
+            <div id="loginSecurityInfo" class="mb-4 hidden">
+                <div id="loginAttemptsInfo" class="bg-blue-50 border border-blue-200 p-3 rounded mb-2">
+                    <p class="text-sm text-blue-800"><i class="fas fa-info-circle mr-1"></i> Sisa percobaan login: <span id="remainingAttempts" class="font-bold">5</span> kali</p>
+                </div>
+                <div id="loginLockoutInfo" class="hidden bg-red-50 border border-red-200 p-3 rounded">
+                    <p class="text-sm text-red-800"><i class="fas fa-lock mr-1"></i> <strong>AKUN TERKUNCI!</strong></p>
+                    <p class="text-xs text-red-600">Coba lagi dalam: <span id="lockoutCountdown" class="font-bold">--:--</span></p>
+                </div>
+            </div>
+            
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-bold mb-1">Nama Lengkap</label>
+                    <input type="text" id="loginName" required class="w-full border p-3 rounded">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-bold mb-1">Kode Verifikasi</label>
+                    <input type="password" id="loginCode" required class="w-full border p-3 rounded">
+                </div>
+                <p id="loginError" class="text-red-500 text-sm mb-4 hidden"></p>
+                <button type="submit" id="loginBtnSubmit" class="w-full bg-ipsiBlack text-white py-3 rounded font-bold hover:bg-gray-800">MASUK</button>
+            </form>
+            
+            <!-- Security Warning -->
+            <div class="mt-4 text-center">
+                <p class="text-xs text-gray-500">
+                    <i class="fas fa-shield-alt mr-1"></i>
+                    Max 5 percobaan dalam 15 menit. Akun terkunci 15 menit setelah 5x gagal.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CHECKOUT -->
+    <div id="checkoutModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold">Pembayaran</h2>
+                    <button onclick="closeCheckout()" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
+                </div>
+                
+                <div class="bg-gray-100 p-4 rounded mb-4">
+                    <h3 class="font-bold mb-2">Rekening Panitia:</h3>
+                    <p class="text-lg font-bold text-blue-800">BRI | 3029-0108-1857-534</p>
+                    <p class="text-sm">a.n NAFISAH AMALINA</p>
+                    <p class="text-sm">#Jangan lupa untuk melampirkan kode pendaftaran di keterangan saat melakukan transaksi</p>
+                    <p class="text-sm">#Ingat id transaksi / no invoice!</p>
+                    <p class="text-sm">#Hukum dan Konsekuensi berlaku jika terdapat pemalsuan data!</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h3 class="font-bold mb-2">DAFTAR ATLET :</h3>
+                    <ul id="checkoutList" class="text-sm bg-gray-50 p-3 rounded max-h-40 overflow-y-auto"></ul>
+                    <div class="mt-2 pt-2 border-t">
+                        <p class="font-bold text-lg">Total: Rp <span id="checkoutTotal">0</span></p>
+                    </div>
+                </div>
+                
+                <button onclick="processCheckout()" class="w-full bg-green-600 text-white py-3 rounded font-bold hover:bg-green-700">LANJUT & DOWNLOAD BUKTI PENDAFTARAN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: LIHAT/DOWNLOAD STRUK -->
+    <div id="lihatStrukModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-5xl max-h-[95vh] overflow-auto">
+            <div class="flex justify-between items-center p-4 border-b sticky top-0 bg-white">
+                <h2 class="text-xl font-bold">Bukti Pendaftaran</h2>
+                <button onclick="closeLihatStruk()" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div id="strukContent" class="bg-white p-2"></div>
+            <div class="p-4 border-t sticky bottom-0 bg-white flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
+                <button onclick="downloadPDF()" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"><i class="fas fa-file-pdf mr-2"></i> Download PDF</button>
+                <button onclick="window.print()" class="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700"><i class="fas fa-print mr-2"></i> Print</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL: BUKA STRUK (BY KODE) -->
+    <div id="bukaStrukModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold"><i class="fas fa-file-download mr-2"></i> Bukti Pendaftaran </h2>
+                <button onclick="closeBukaStrukModal()" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <p class="text-sm text-gray-600 mb-4">Masukkan kode pendaftaran untuk membuka bukti pendaftaran</p>
+            <form onsubmit="openStrukByCode(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-bold mb-2 text-black">Kode Pendaftaran</label>
+                    <input type="text" id="strukCodeInput" required class="w-full border p-3 rounded text-center text-lg tracking-widest" placeholder="IPSI3-XXXXXXXX">
+                </div>
+                <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded font-bold hover:bg-purple-700"><i class="fas fa-search mr-2"></i> Buka Struk</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: REMINDER SETELAH DOWNLOAD -->
+    <div id="reminderModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 text-center">
+            <div class="text-green-500 text-6xl mb-4"><i class="fas fa-check-circle"></i></div>
+            <h2 class="text-2xl font-bold mb-2"> SUKSES </h2>
+            <p class="text-gray-600 mb-4">Bukti pendaftaran berhasil di-download.</p>
+            
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded text-left mb-6">
+                <p class="font-bold text-yellow-800"><i class="fas fa-exclamation-triangle mr-2"></i>WARNING!</p>
+                <p class="text-sm text-gray-700 mt-2">Jangan lupa untuk:</p>
+                <ol class="list-decimal list-inside text-sm text-gray-700 mt-1">
+                    <li>Melakukan transfer ke rekening BRI dengan melampirkan kode pendaftaran (jika belum)</li>
+                    <li><strong>Masuk ke menu KONFIRMASI PENDAFTARAN</strong></li>
+                    <li>Masukkan KODE PENDAFTARAN untuk validasi</li>
+                    <li>Hukum dan Konsekuensi berlaku jika terdapat pemalsuan data!</li>
+                </ol>
+            </div>
+            
+            <div class="flex gap-2">
+                <button onclick="closeReminderAndGoKonfirmasi()" class="flex-1 bg-green-600 text-white py-3 rounded font-bold hover:bg-green-700"><i class="fas fa-credit-card mr-2"></i> Konfirmasi Pendaftaran</button>
+                <button onclick="closeReminderModal()" class="flex-1 bg-gray-500 text-white py-3 rounded font-bold hover:bg-gray-600">Nanti Saja</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: RIWAYAT -->
+    <div id="riwayatModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">Riwayat Pendaftaran</h2>
+                <button onclick="closeRiwayatModal()" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div id="riwayatList" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADMIN & BERITA -->
+    <div id="adminModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-5xl max-h-[90vh] overflow-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">Panel Admin IPSI CUP 3</h2>
+                <button onclick="closeAdminModal()" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            
+            <!-- Tab Menu Admin -->
+            <div class="flex space-x-2 mb-4 border-b pb-2">
+                <button onclick="switchAdminTab('data')" class="px-4 py-2 bg-blue-100 text-blue-800 rounded font-bold">Data Atlet</button>
+                <button onclick="switchAdminTab('news')" class="px-4 py-2 bg-gray-100 text-gray-800 rounded font-bold hover:bg-gray-200">Kelola Berita</button>
+            </div>
+
+            <!-- Tab: Data Atlet -->
+            <div id="adminTabData" class="block">
+                <div class="grid grid-cols-4 gap-4 mb-4">
+                    <div class="bg-blue-100 p-4 rounded text-center"><p class="text-sm text-blue-800">Total Pendaftar</p><p class="text-2xl font-bold" id="adminTotal">0</p></div>
+                    <div class="bg-green-100 p-4 rounded text-center"><p class="text-sm text-green-800">Sudah Bayar</p><p class="text-2xl font-bold" id="adminPaid">0</p></div>
+                    <div class="bg-yellow-100 p-4 rounded text-center"><p class="text-sm text-yellow-800">Pending</p><p class="text-2xl font-bold" id="adminPending">0</p></div>
+                    <div class="bg-red-100 p-4 rounded text-center"><p class="text-sm text-red-800">Total Pendapatan</p><p class="text-2xl font-bold" id="adminRevenue">Rp 0</p></div>
+                </div>
+                <div class="mb-4">
+                    <button onclick="exportExcel()" class="bg-green-600 text-white px-4 py-2 rounded mr-2"><i class="fas fa-file-excel"></i> Export Excel</button>
+                    <button onclick="printAdmin()" class="bg-gray-600 text-white px-4 py-2 rounded"><i class="fas fa-print"></i> Print</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="p-2">No</th>
+                                <th class="p-2">Nama Atlet</th>
+                                <th class="p-2">Perguruan</th>
+                                <th class="p-2">Kategori</th>
+                                <th class="p-2">Kelas</th>
+                                <th class="p-2">Official</th>
+                                <th class="p-2">Email Official</th>
+                                <th class="p-2">Link Dokumen</th>
+                                <th class="p-2">Status</th>
+                                <th class="p-2">Kode Pendaftaran</th>
+                                <th class="p-2">Nomor Invoice</th>
+                                <th class="p-2">Tanggal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab: Kelola Berita -->
+            <div id="adminTabNews" class="hidden">
+                <div class="bg-gray-50 p-4 rounded mb-4">
+                    <h3 class="font-bold mb-2">Tambah/Edit Berita</h3>
+                    <form id="newsForm" onsubmit="saveNews(event)">
+                        <input type="hidden" id="newsId">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div><label class="block text-sm font-bold mb-1">Judul Berita</label><input type="text" id="newsTitle" required class="w-full border p-2 rounded"></div>
+                            <div><label class="block text-sm font-bold mb-1">Kategori</label>
+                                <select id="newsCategory" class="w-full border p-2 rounded">
+                                    <option value="poster">Poster</option>
+                                    <option value="konfirmasi">Grup Lembaga IPSI</option>
+                                    <option value="bagan">Bagan</option>
+                                    <option value="umum">Umum</option>
+                                </select>
+                            </div>
+                            <div><label class="block text-sm font-bold mb-1">Tanggal</label><input type="date" id="newsDate" required class="w-full border p-2 rounded"></div>
+                        </div>
+                        <div class="mb-4"><label class="block text-sm font-bold mb-1">Isi Berita</label><textarea id="newsContent" rows="4" required class="w-full border p-2 rounded"></textarea></div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-bold mb-1">URL Gambar/Poster</label>
+                            <input type="url" id="newsImage" placeholder="https://..." class="w-full border p-2 rounded mb-2">
+                            <button type="button" onclick="uploadFile('newsImage')" class="bg-blue-500 text-white px-4 py-1 rounded text-sm hover:bg-blue-600"><i class="fas fa-upload mr-1"></i>Upload Gambar (JPG)</button>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-bold mb-1">URL File PDF (Opsional)</label>
+                            <input type="url" id="newsPdf" placeholder="https://drive.google.com/.../view?usp=sharing" class="w-full border p-2 rounded mb-2">
+                            <button type="button" onclick="uploadFile('newsPdf')" class="bg-red-500 text-white px-4 py-1 rounded text-sm hover:bg-red-600"><i class="fas fa-upload mr-1"></i>Upload PDF</button>
+                            <p class="text-xs text-gray-500 mt-1">Klik upload untuk unggah ke Google Drive via upload_drive.php, lalu auto-fill URL.</p>
+                        </div>
+
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" onclick="resetNewsForm()" class="px-4 py-2 bg-gray-300 rounded">Batal</button>
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan Berita</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="p-2">Gambar</th>
+                                <th class="p-2">Judul</th>
+                                <th class="p-2">Kategori</th>
+                                <th class="p-2">Tanggal</th>
+                                <th class="p-2">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="newsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW MODAL: Input Invoice -->
+    <div id="invoiceModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-blue-800"><i class="fas fa-receipt mr-2"></i> Konfirmasi Pembayaran </h2>
+                <button onclick="closeInvoiceModal()" class="text-gray-500 hover:text-gray-700 text-xl"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="saveInvoice(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-bold mb-2"> Input Nomor Invoice / ID Transaksi</label>
+                    <input type="text" id="invoiceNumber" required placeholder="Contoh: 1234567890-ABC" class="w-full border p-3 rounded-lg text-lg tracking-wider">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-bold mb-2">Catatan (Opsional)</label>
+                    <textarea id="invoiceNote" rows="3" placeholder="Bank, jam transfer, dll..." class="w-full border p-3 rounded-lg resize-vertical"></textarea>
+                    <p class="text-xs text-gray-500 mt-1">Official: <span id="invoiceOfficial" class="font-bold"></span></p>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 shadow-lg">
+                    <i class="fas fa-save mr-2"></i>KONFIRMASI
+                </button>
+            </form>
+            <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded text-sm">
+                <i class="fas fa-info-circle text-green-600 mr-1"></i>
+                <strong>Konfirmasi Tersimpan!</strong> Admin akan memverifikasi pendaftaran.
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-ipsiBlack text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-2">SEKRETARIAT IPSI: JL. WISMA PRATAMA ASRI KAJEN KAB PEKALONGAN</p>
+            <p class="mb-2">EMAIL: ipsilatpekalongan@gmail.com</p>
+            <p class="mb-2">CP: 085713408400 (NA)</p>
+            <p class="text-sm text-gray-400">All IPSI PKL 2026 | CREATED BY NAVORA</p>
+        </div>
+    </footer>
+
+    <script>
+    // ==================== KONFIGURASI KEAMANAN ====================
+    // Keamanan untuk banyak user bersamaan
+    var SECURITY_CONFIG = {
+        MAX_LOGIN_ATTEMPTS: 5,           // Max percobaan login
+        LOCKOUT_DURATION: 15 * 60 * 1000, // 15 menit lockout
+        TIME_WINDOW: 15 * 60 * 1000,      // 15 menit window untuk hitungan
+        PROGRESSIVE_DELAY: true,          // Aktifkan delay progresif
+        BASE_DELAY: 500,                  // Delay dasar (ms)
+        MAX_DELAY: 5000,                  // Delay maksimal (ms)
+        SESSION_DURATION: 60 * 60 * 1000, // 1 jam session
+        TOKEN_LENGTH: 32                  // Panjang token session
+    };
+
+    // State keamanan
+    var securityState = {
+        loginAttempts: {},
+        lockedAccounts: {},
+        sessionTokens: {},
+        lastActivity: {}
+    };
+
+    // ==================== FUNGSI KEAMANAN ====================
+    
+    // Generate random token
+    function generateSecureToken() {
+        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var token = '';
+        for (var i = 0; i < SECURITY_CONFIG.TOKEN_LENGTH; i++) {
+            token += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return token + '-' + Date.now();
+    }
+
+    // Load security state dari localStorage
+    function loadSecurityState() {
+        var saved = localStorage.getItem('security_state');
+        if (saved) {
+            try {
+                securityState = JSON.parse(saved);
+                // Clean expired lockouts
+                var now = Date.now();
+                for (var key in securityState.lockedAccounts) {
+                    if (securityState.lockedAccounts[key] < now) {
+                        delete securityState.lockedAccounts[key];
+                    }
+                }
+            } catch (e) {
+                securityState = {
+                    loginAttempts: {},
+                    lockedAccounts: {},
+                    sessionTokens: {},
+                    lastActivity: {}
+                };
+            }
+        }
+    }
+
+    // Save security state ke localStorage
+    function saveSecurityState() {
+        localStorage.setItem('security_state', JSON.stringify(securityState));
+    }
+
+    // Check apakah account locked
+    function isAccountLocked(identifier) {
+        var lockTime = securityState.lockedAccounts[identifier];
+        if (lockTime) {
+            if (Date.now() < lockTime) {
+                return lockTime;
+            } else {
+                // Lockout expired, hapus
+                delete securityState.lockedAccounts[identifier];
+                delete securityState.loginAttempts[identifier];
+                saveSecurityState();
+                return false;
+            }
+        }
+        return false;
+    }
+
+    // Lock account sementara
+    function lockAccount(identifier) {
+        var lockUntil = Date.now() + SECURITY_CONFIG.LOCKOUT_DURATION;
+        securityState.lockedAccounts[identifier] = lockUntil;
+        saveSecurityState();
+        return lockUntil;
+    }
+
+    // Get remaining attempts untuk identifier
+    function getRemainingAttempts(identifier) {
+        var attempts = securityState.loginAttempts[identifier] || { count: 0, firstAttempt: Date.now() };
+        var now = Date.now();
+        
+        // Reset jika sudah melewati time window
+        if (now - attempts.firstAttempt > SECURITY_CONFIG.TIME_WINDOW) {
+            return SECURITY_CONFIG.MAX_LOGIN_ATTEMPTS;
+        }
+        
+        return Math.max(0, SECURITY_CONFIG.MAX_LOGIN_ATTEMPTS - attempts.count);
+    }
+
+    // Record login attempt
+    function recordLoginAttempt(identifier, success) {
+        if (success) {
+            // Reset attempt jika berhasil
+            delete securityState.loginAttempts[identifier];
+            delete securityState.lockedAccounts[identifier];
+        } else {
+            var attempts = securityState.loginAttempts[identifier] || { count: 0, firstAttempt: Date.now() };
+            var now = Date.now();
+            
+            // Reset jika sudah melewati time window
+            if (now - attempts.firstAttempt > SECURITY_CONFIG.TIME_WINDOW) {
+                attempts = { count: 0, firstAttempt: now };
+            }
+            
+            attempts.count++;
+            securityState.loginAttempts[identifier] = attempts;
+            
+            // Check jika perlu lockout
+            if (attempts.count >= SECURITY_CONFIG.MAX_LOGIN_ATTEMPTS) {
+                lockAccount(identifier);
+            }
+        }
+        saveSecurityState();
+    }
+
+    // Get progressive delay based on attempt count
+    function getProgressiveDelay(identifier) {
+        if (!SECURITY_CONFIG.PROGRESSIVE_DELAY) return 0;
+        
+        var attempts = securityState.loginAttempts[identifier] || { count: 1 };
+        var count = attempts.count || 1;
+        
+        // Exponential delay: base * 2^(count-1), capped at MAX_DELAY
+        var delay = Math.min(
+            SECURITY_CONFIG.BASE_DELAY * Math.pow(2, count - 1),
+            SECURITY_CONFIG.MAX_DELAY
+        );
+        
+        return Math.floor(delay);
+    }
+
+    // Format countdown time
+    function formatCountdown(milliseconds) {
+        var minutes = Math.floor(milliseconds / 60000);
+        var seconds = Math.floor((milliseconds % 60000) / 1000);
+        return minutes + ' menit ' + seconds + ' detik';
+    }
+
+    // ==================== SESSION MANAGEMENT ====================
+    
+    // Create session
+    function createSession(userData) {
+        var sessionId = generateSecureToken();
+        var sessionData = {
+            user: userData,
+            created: Date.now(),
+            expires: Date.now() + SECURITY_CONFIG.SESSION_DURATION,
+            lastActivity: Date.now(),
+            token: sessionId
+        };
+        
+        securityState.sessionTokens[sessionId] = sessionData;
+        saveSecurityState();
+        
+        return sessionData;
+    }
+
+    // Validate session
+    function validateSession(sessionId) {
+        var session = securityState.sessionTokens[sessionId];
+        if (!session) return false;
+        
+        if (Date.now() > session.expires) {
+            // Session expired, hapus
+            delete securityState.sessionTokens[sessionId];
+            saveSecurityState();
+            return false;
+        }
+        
+        // Update last activity
+        session.lastActivity = Date.now();
+        saveSecurityState();
+        
+        return true;
+    }
+
+    // Destroy session
+    function destroySession(sessionId) {
+        if (sessionId && securityState.sessionTokens[sessionId]) {
+            delete securityState.sessionTokens[sessionId];
+            saveSecurityState();
+        }
+    }
+
+    // ==================== KONFIGURASI ASAL ====================
+    var SUPABASE_URL = 'https://arhmdfboxqgmkqwnsmqx.supabase.co';
+    var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyaG1kZmJveHFnbWtxd25zbXF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODkyODIsImV4cCI6MjA4ODQ2NTI4Mn0.jFSM_eIxY11F_Jr0PvG9eyRp2wkJxdK5r7Abgwqq3A8';
+    var supabase;
+    try { supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) { console.log('Supabase error'); }
+    var PRICE_PER_ATLET = 175000;
+
+    // ==================== STATE MANAGEMENT ====================
+    var currentUser = null;
+    var cart = [];
+    var isAdmin = false;
+    var currentStruk = null;
+    var sessionTimeout = null;
+    var SESSION_DURATION = 60 * 60 * 1000; // 1 jam
+    var allAthletes = [];
+    var allNews = [];
+    var currentPaymentCode = '';
+    var generatedPaymentCode = '';
+
+    // ==================== NAVIGATION ====================
+    function showPage(pageId) {
+        document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        window.scrollTo(0,0);
+        
+        if (pageId === 'page-berita') {
+            loadNews();
+        }
+    }
+
+    function goHome() {
+        showPage('page-home');
+    }
+
+    function showDashboardSection(section) {
+        document.querySelectorAll('.dashboard-section').forEach(el => el.classList.add('hidden'));
+        document.getElementById('section-' + section).classList.remove('hidden');
+    }
+
+    function showDashboard() {
+        showPage('page-dashboard');
+        document.getElementById('userName').innerHTML = currentUser.name;
+        document.getElementById('userPerguruan').innerHTML = currentUser.perguruan;
+        document.getElementById('loginBtn').innerHTML = 'Keluar';
+        
+        updateAdminUI();
+        
+        // Default to input atlet section
+        showDashboardSection('input-atlet');
+        
+        loadCart();
+        startSessionTimer();
+    }
+
+    // ==================== AUTH ====================
+    function checkAuth() {
+        var userData = localStorage.getItem('official_user');
+        if (userData) {
+            try {
+                currentUser = JSON.parse(userData);
+                if (currentUser.is_admin) {
+                    isAdmin = true;
+                }
+                showDashboard();
+                startSessionTimer();
+            } catch (e) { localStorage.removeItem('official_user'); }
+        }
+        loadCart();
+        loadNews();
+        
+        // Load & display total registrants (hanya yang sudah LUNAS)
+        var allAthletes = JSON.parse(localStorage.getItem('all_athletes') || '[]');
+        var paidAthletes = allAthletes.filter(a => a.status === 'paid').length;
+        document.getElementById('totalRegistrants').innerHTML = paidAthletes.toLocaleString('id-ID');
+
+        updateAdminUI();
+    }
+
+    function updateAdminUI() {
+        var adminBtn = document.getElementById('adminPanelBtn');
+        var adminBtnMobile = document.getElementById('adminPanelBtnMobile');
+        if (currentUser && currentUser.is_admin) {
+            if (adminBtn) adminBtn.classList.remove('hidden');
+            if (adminBtnMobile) adminBtnMobile.classList.remove('hidden');
+            document.getElementById('loginBtn').innerText = 'Logout';
+        } else {
+            if (adminBtn) adminBtn.classList.add('hidden');
+            if (adminBtnMobile) adminBtnMobile.classList.add('hidden');
+            document.getElementById('loginBtn').innerText = currentUser ? 'Logout' : 'Login Official';
+        }
+    }
+
+    function toggleMobileMenu() {
+        var mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenu.style.display === 'none' || mobileMenu.style.display === '') {
+            mobileMenu.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        } else {
+            mobileMenu.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    }
+
+    document.addEventListener('click', function(e) {
+        var mobileMenu = document.getElementById('mobileMenu');
+        var mobileBtn = document.getElementById('mobileMenuBtn');
+        if (mobileMenu && mobileMenu.style.display === 'flex' && !mobileMenu.contains(e.target) && !mobileBtn.contains(e.target)) {
+            mobileMenu.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    });
+
+    function startSessionTimer() {
+        if (sessionTimeout) clearTimeout(sessionTimeout);
+        sessionTimeout = setTimeout(function() {
+            if (currentUser) {
+                alert('Sesi login telah berakhir setelah 1 jam. Data atlet di daftar TETAP TERSIMPAN dan bisa dilanjutkan setelah login kembali.');
+                logout(false);
+            }
+        }, SESSION_DURATION);
+    }
+
+    function resetSessionTimer() {
+        if (currentUser) startSessionTimer();
+    }
+
+    function toggleLogin() {
+        if (currentUser) { logout(true); } else { openLoginModal(); }
+    }
+
+    function openLoginModal() {
+        // Load security state first
+        loadSecurityState();
+        
+        // Update security info display
+        updateLoginSecurityDisplay();
+        
+        document.getElementById('loginModal').style.display = 'flex';
+        document.getElementById('loginName').focus();
+    }
+
+    // Update login security display (attempts info and lockout status)
+    function updateLoginSecurityDisplay() {
+        var name = document.getElementById('loginName').value.trim().toLowerCase();
+        var identifier = name || 'default';
+        
+        var securityInfo = document.getElementById('loginSecurityInfo');
+        var attemptsInfo = document.getElementById('loginAttemptsInfo');
+        var lockoutInfo = document.getElementById('loginLockoutInfo');
+        var remainingAttempts = document.getElementById('remainingAttempts');
+        var lockoutCountdown = document.getElementById('lockoutCountdown');
+        var submitBtn = document.getElementById('loginBtnSubmit');
+        
+        // Check if locked
+        var lockTime = isAccountLocked(identifier);
+        
+        if (lockTime) {
+            securityInfo.classList.remove('hidden');
+            attemptsInfo.classList.add('hidden');
+            lockoutInfo.classList.remove('hidden');
+            submitBtn.disabled = true;
+            
+            // Start countdown
+            var updateCountdown = function() {
+                var remaining = lockTime - Date.now();
+                if (remaining <= 0) {
+                    lockoutInfo.classList.add('hidden');
+                    securityInfo.classList.add('hidden');
+                    submitBtn.disabled = false;
+                    return;
+                }
+                lockoutCountdown.innerHTML = formatCountdown(remaining);
+            };
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        } else {
+            var remaining = getRemainingAttempts(identifier);
+            if (remaining < SECURITY_CONFIG.MAX_LOGIN_ATTEMPTS) {
+                securityInfo.classList.remove('hidden');
+                attemptsInfo.classList.remove('hidden');
+                lockoutInfo.classList.add('hidden');
+                remainingAttempts.innerHTML = remaining;
+                submitBtn.disabled = false;
+            } else {
+                securityInfo.classList.add('hidden');
+                submitBtn.disabled = false;
+            }
+        }
+    }
+
+    // Listen for name input changes to update security display
+    document.getElementById('loginName').addEventListener('input', updateLoginSecurityDisplay);
+
+    function closeLoginModal() {
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('loginError').style.display = 'none';
+        document.getElementById('loginForm').reset();
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        var name = document.getElementById('loginName').value.trim();
+        var code = document.getElementById('loginCode').value.trim();
+        var identifier = name.toLowerCase();
+        
+        if (!name || !code) {
+            document.getElementById('loginError').innerHTML = 'Mohon isi nama dan kode verifikasi!';
+            document.getElementById('loginError').style.display = 'block';
+            return;
+        }
+        
+        // Check if account is locked
+        var lockTime = isAccountLocked(identifier);
+        if (lockTime) {
+            var remaining = lockTime - Date.now();
+            document.getElementById('loginError').innerHTML = 'Akun terkunci! Coba lagi dalam ' + formatCountdown(remaining);
+            document.getElementById('loginError').style.display = 'block';
+            updateLoginSecurityDisplay();
+            return;
+        }
+        
+        // Apply progressive delay if needed
+        var delay = getProgressiveDelay(identifier);
+        if (delay > 0) {
+            var submitBtn = document.getElementById('loginBtnSubmit');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Mohon tunggu...';
+            
+            setTimeout(function() {
+                performLogin(name, code, identifier);
+            }, delay);
+        } else {
+            performLogin(name, code, identifier);
+        }
+    }
+
+function performLogin(name, code, identifier) {
+        var submitBtn = document.getElementById('loginBtnSubmit');
+        var errorEl = document.getElementById('loginError');
+        
+        // Show loading
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Memverifikasi...';
+        errorEl.style.display = 'none';
+        
+        // Admin fallback (production bisa dihapus)
+        if (name.toLowerCase() === 'admin ipsi' && code === 'admin123') {
+            currentUser = { name: 'Admin IPSI', perguruan: 'IPSI Pekalongan', is_admin: true };
+            localStorage.setItem('official_user', JSON.stringify(currentUser));
+            isAdmin = true;
+            recordLoginAttempt(identifier, true);
+            closeLoginModal();
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'MASUK';
+            alert('✅ Login Admin berhasil!');
+            openAdminPanel();
+            return;
+        }
+        
+        // Real Supabase Query
+        if (!supabase) {
+            errorEl.innerHTML = '❌ Supabase tidak terload. Refresh halaman.';
+            errorEl.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'MASUK';
+            return;
+        }
+        
+        supabase
+            .from('officials')
+            .select('*')
+            .eq('name', name.trim())
+            .eq('unique_code', code)
+            .maybeSingle()
+            .then(({ data, error }) => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'MASUK';
+                
+                if (error) {
+                    console.error('Supabase Error:', error);
+                    errorEl.innerHTML = '❌ Database error: ' + error.message;
+                    errorEl.style.display = 'block';
+                    recordLoginAttempt(identifier, false);
+                    updateLoginSecurityDisplay();
+                    return;
+                }
+                
+                if (data) {
+                    // Success!
+                    currentUser = {
+                        ...data,
+                        is_admin: data.name.toLowerCase().includes('admin')
+                    };
+                    localStorage.setItem('official_user', JSON.stringify(currentUser));
+                    isAdmin = currentUser.is_admin;
+                    
+                    recordLoginAttempt(identifier, true);
+                    closeLoginModal();
+                    
+                    var greeting = currentUser.is_admin ? 'Admin!' : 'Official!';
+                    alert('✅ Login berhasil! Selamat datang, ' + currentUser.name + ' (' + greeting + ')');
+                    
+                    if (currentUser.is_admin) {
+                        openAdminPanel();
+                    } else {
+                        showDashboard();
+                    }
+                } else {
+                    // No user found
+                    recordLoginAttempt(identifier, false);
+                    var remaining = getRemainingAttempts(identifier);
+                    errorEl.innerHTML = '❌ Nama atau kode salah! Sisa: ' + remaining + ' percobaan';
+                    errorEl.style.display = 'block';
+                    updateLoginSecurityDisplay();
+                }
+            })
+            .catch((err) => {
+                console.error('Unexpected error:', err);
+                errorEl.innerHTML = '❌ Koneksi error. Cek internet!';
+                errorEl.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'MASUK';
+            });
+    }
+
+    function logout(clearCart) {
+        if (clearCart !== false) {
+            cart = [];
+            generatedPaymentCode = '';
+            localStorage.removeItem('cart');
+            renderCart();
+            resetPaymentCode();
+        }
+        if (sessionTimeout) clearTimeout(sessionTimeout);
+        currentUser = null;
+        isAdmin = false;
+        document.getElementById('loginBtn').innerHTML = 'Login Official';
+        updateAdminUI();
+        alert('Anda telah logout. Data pendaftaran tersimpan.');
+        goHome();
+    }
+
+    // ==================== CART & REGISTRATION ====================
+    function loadCart() {
+        var saved = localStorage.getItem('cart');
+        if (saved) {
+            try { cart = JSON.parse(saved); } catch (e) { cart = []; }
+        }
+        renderCart();
+    }
+
+    function renderCart() {
+        var list = document.getElementById('cartList');
+        var total = document.getElementById('cartTotal');
+        var count = document.getElementById('cartCount');
+        
+        if (cart.length === 0) {
+            list.innerHTML = '<li class="text-gray-500 text-center py-4">Daftar Atlet Kosong</li>';
+            document.getElementById('generateCodeBtn').disabled = true;
+            document.getElementById('checkoutBtn').disabled = true;
+        } else {
+            var html = '';
+            for (var i = 0; i < cart.length; i++) {
+                html += '<li class="flex justify-between items-center bg-white p-2 rounded shadow-sm"><span>' + cart[i].name + '</span><button onclick="removeFromCart(' + i + ')" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button></li>';
+            }
+            list.innerHTML = html;
+            document.getElementById('generateCodeBtn').disabled = false;
+            document.getElementById('checkoutBtn').disabled = !generatedPaymentCode;
+        }
+        total.innerHTML = (cart.length * PRICE_PER_ATLET).toLocaleString('id-ID');
+        count.innerHTML = cart.length;
+    }
+
+    function addAthlete(e) {
+        e.preventDefault();
+        if (!currentUser) { alert('Silakan login!'); openLoginModal(); return; }
+        
+        var docLink = document.getElementById('docLink').value.trim();
+        var docConfirmed = document.getElementById('docUploadConfirmed');
+        
+        if (!docLink) { alert('Silakan masukkan link Google Drive dokumen pendukung terlebih dahulu!'); return; }
+        if (!docConfirmed.checked) { alert('Anda harus memastikan link Google Drive sudah di-"Share" menjadi "Semua orang dengan link" dan centang kotak konfirmasi!'); return; }
+        
+        var athlete = {
+            id: Date.now(),
+            email_official: document.getElementById('formEmailOfficial').value,
+            name: document.getElementById('formName').value,
+            ttl: document.getElementById('formTtl').value,
+            gender: document.getElementById('formGender').value,
+            category: document.getElementById('formCategory').value,
+            age_group: document.getElementById('formAgeGroup').value,
+            kelas_tanding: document.getElementById('formKelas').value,
+            school: document.getElementById('formSchool').value,
+            nisn: document.getElementById('formNisn').value,
+            kelas: document.getElementById('formKelasSekolah').value,
+            nik: document.getElementById('formNik').value,
+            bb: document.getElementById('formBb').value,
+            tb: document.getElementById('formTb').value,
+            docLink: docLink,
+            official_name: currentUser.name,
+            perguruan: currentUser.perguruan,
+            status: 'pending'
+        };
+        
+        cart.push(athlete);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        document.getElementById('athleteForm').reset();
+        toggleFisik();
+        renderCart();
+        alert('Atlet ditambahkan ke Daftar!');
+    }
+
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        
+        // Reset payment code if cart is empty
+        if (cart.length === 0) {
+            resetPaymentCode();
+        }
+        
+        renderCart();
+    }
+
+    function toggleFisik() {
+        var category = document.getElementById('formCategory').value;
+        var fisik = document.getElementById('fisikContainer');
+        fisik.style.display = (category === 'Tanding') ? 'block' : 'none';
+    }
+
+    // ==================== PEMBAYARAN - KODE PEMBAYARAN ====================
+    function generatePaymentCode() {
+        if (cart.length === 0) {
+            alert('Daftar Atlet Kosong! Tambahkan atlet terlebih dahulu.');
+            return;
+        }
+        
+        // Generate unique payment code
+        generatedPaymentCode = 'IPSI3-' + Date.now().toString().slice(-8);
+        
+        // Show payment code
+        document.getElementById('paymentCodeDisplay').classList.remove('hidden');
+        document.getElementById('generatedPaymentCode').innerHTML = generatedPaymentCode;
+        
+        // Enable checkout button
+        document.getElementById('checkoutBtn').disabled = false;
+        
+        alert('Kode pendaftaran berhasil digenerate: ' + generatedPaymentCode + '\n\nCATAT KODE INI! Lampirkan pada konfirmasi pendaftaran.');
+    }
+
+    function resetPaymentCode() {
+        generatedPaymentCode = '';
+        document.getElementById('paymentCodeDisplay').classList.add('hidden');
+        document.getElementById('generatedPaymentCode').innerHTML = '';
+        document.getElementById('checkoutBtn').disabled = true;
+    }
+
+    // ==================== CHECKOUT & PAYMENT ====================
+    function showCheckout() {
+        if (cart.length === 0) { alert('Daftar Atlet Kosong!'); return; }
+        if (!generatedPaymentCode) { alert('Silakan generate kode pendaftaran terlebih dahulu!'); return; }
+        
+        var list = document.getElementById('checkoutList');
+        var html = '';
+        for (var i = 0; i < cart.length; i++) {
+            html += '<li class="border-b py-1">' + cart[i].name + ' (' + cart[i].category + ' - ' + cart[i].age_group + ')</li>';
+        }
+        list.innerHTML = html;
+        document.getElementById('checkoutTotal').innerHTML = (cart.length * PRICE_PER_ATLET).toLocaleString('id-ID');
+        document.getElementById('checkoutModal').style.display = 'flex';
+    }
+
+    function closeCheckout() {
+        document.getElementById('checkoutModal').style.display = 'none';
+    }
+
+    function processCheckout() {
+        var registeredCount = cart.length;
+        var totalAmount = cart.length * PRICE_PER_ATLET;
+        
+        // Save to LocalStorage with payment code
+        var allAthletes = JSON.parse(localStorage.getItem('all_athletes') || '[]');
+        cart.forEach(function(a) {
+            a.status = 'pending';
+            a.payment_date = new Date().toISOString();
+            a.payment_code = generatedPaymentCode;
+            allAthletes.push(a);
+        });
+        localStorage.setItem('all_athletes', JSON.stringify(allAthletes));
+        
+        // Save History
+        var riwayat = JSON.parse(localStorage.getItem('riwayat_struk') || '[]');
+        var strukBaru = {
+            tanggal: new Date().toISOString(),
+            officialName: currentUser.name,
+            perguruan: currentUser.perguruan,
+            total: totalAmount,
+            atlet: cart.slice(),
+            paymentCode: generatedPaymentCode,
+            status: 'pending'
+        };
+        riwayat.push(strukBaru);
+        localStorage.setItem('riwayat_struk', JSON.stringify(riwayat));
+        
+        // Show Receipt
+        currentStruk = strukBaru;
+        renderStruk(strukBaru);
+        
+        closeCheckout();
+        document.getElementById('lihatStrukModal').style.display = 'flex';
+        
+        // Update Total Registrants (persist across sessions) - hanya setelah LUNAS
+        var allAthletes = JSON.parse(localStorage.getItem('all_athletes') || '[]');
+        var paidAthletes = allAthletes.filter(a => a.status === 'paid').length;
+        localStorage.setItem('totalRegistrants', paidAthletes);
+        document.getElementById('totalRegistrants').innerHTML = paidAthletes.toLocaleString('id-ID');
+        
+        // Clear cart but keep payment code for reference
+        cart = [];
+        localStorage.removeItem('cart');
+        renderCart();
+    }
+
+    // ==================== STRUK RECEIPT ====================
+    function renderStruk(data) {
+        var kodePembayaran = data.paymentCode || generatedPaymentCode || 'IPSI3-' + Date.now().toString().slice(-8);
+        
+        var html = '<div style="width: 100%; max-width: 720px; padding: 15px; margin: auto; background: white; font-family: Arial, sans-serif; font-size: 11px; line-height: 1.4; box-sizing: border-box;">';        
+
+        html += '<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">';
+        html += '<div>';
+        html += '<h1 style="font-size: 18px; font-weight: bold; margin: 0;">BUKTI PENDAFTARAN IPSI CUP 3</h1>';
+        html += '<p style="font-size: 10px; margin: 2px 0;">KEJUARAAN PENCAK SILAT PELAJAR KABUPATEN PEKALONGAN 2026</p>';
+        html += '</div>';
+        html += '<div style="text-align: right; border: 2px solid #cc0000; padding: 4px 8px; border-radius: 4px;">';
+        html += '<p style="font-size: 9px; margin: 0; color: #666;">KODE PENDAFTARAN</p>';
+        html += '<p style="font-size: 14px; font-weight: bold; margin: 0; color: #cc0000;">' + kodePembayaran + '</p>';
+        html += '</div>';
+        html += '</div>';
+        
+        html += '<div style="display: flex; justify-content: space-between; margin-bottom: 10px; padding: 8px; background: #f5f5f5; border-radius: 4px;">';
+        html += '<div style="width: 48%;">';
+        html += '<p style="margin: 2px 0; font-size: 10px;"><strong>Tanggal:</strong> ' + new Date(data.tanggal).toLocaleDateString('id-ID') + '</p>';
+        html += '<p style="margin: 2px 0; font-size: 10px;"><strong>Official:</strong> ' + data.officialName + '</p>';
+        html += '</div>';
+        html += '<div style="width: 48%;">';
+        html += '<p style="margin: 2px 0; font-size: 10px;"><strong>Perguruan:</strong> ' + data.perguruan + '</p>';
+        html += '<p style="margin: 2px 0; font-size: 10px;"><strong>Total Atlet:</strong> ' + data.atlet.length + ' orang</p>';
+        html += '</div>';
+        html += '</div>';
+        
+        var maxPerPage = 25; // 10 atlet per halaman persis
+        var totalPages = Math.ceil(data.atlet.length / maxPerPage);
+        
+        for (var page = 0; page < totalPages; page++) {
+            var startIdx = page * maxPerPage;
+            var endIdx = Math.min(startIdx + maxPerPage, data.atlet.length);
+            var pageAthletes = data.atlet.slice(startIdx, endIdx);
+            
+            if (page === 0) {
+                html += '<div style="border: 1px solid #000; margin-bottom: 10px;">';
+            } else {
+                html += '<div style="border: 1px solid #000; margin-bottom: 10px; page-break-before: always;">';
+                html += '<div style="background: #333; color: white; padding: 5px 8px;">';
+                html += '<strong style="font-size: 11px;">DAFTAR ATLET (LAMPIRAN/HALAMAN ' + (page + 1) + ')</strong>';
+                html += '</div>';
+            }
+            
+            html += '<table style="width: 100%; border-collapse: collapse; font-size: 10px;">';
+            html += '<thead><tr style="background: #e0e0e0;">';
+            html += '<th style="border: 1px solid #000; padding: 4px; text-align: center; width: 25px; font-weight: bold;">No</th>';
+            html += '<th style="border: 1px solid #000; padding: 4px; text-align: left; font-weight: bold;">Nama Atlet</th>';
+            html += '<th style="border: 1px solid #000; padding: 4px; text-align: center; width: 35px; font-weight: bold;">JK</th>';
+            html += '<th style="border: 1px solid #000; padding: 4px; text-align: center; width: 55px; font-weight: bold;">Kategori</th>';
+            html += '<th style="border: 1px solid #000; padding: 4px; text-align: center; width: 65px; font-weight: bold;">Kel. Umur</th>';
+            html += '<th style="border: 1px solid #000; padding: 4px; text-align: center; width: 50px; font-weight: bold;">Kelas</th>';
+            html += '</tr></thead>';
+            html += '<tbody>';
+            
+            pageAthletes.forEach(function(a, index) {
+                var globalIdx = startIdx + index;
+                var bgColor = globalIdx % 2 === 0 ? '#ffffff' : '#f5f5f5';
+                html += '<tr style="background: ' + bgColor + ';">';
+                html += '<td style="border: 1px solid #000; padding: 4px; text-align: center; font-weight: bold;">' + (globalIdx + 1) + '</td>';
+                html += '<td style="border: 1px solid #000; padding: 4px; font-weight: 500;">' + a.name + '</td>';
+                html += '<td style="border: 1px solid #000; padding: 4px; text-align: center;">' + (a.gender === 'Laki-laki' ? 'L' : 'P') + '</td>';
+                html += '<td style="border: 1px solid #000; padding: 4px; text-align: center;">' + a.category + '</td>';
+                html += '<td style="border: 1px solid #000; padding: 4px; text-align: center;">' + a.age_group + '</td>';
+                html += '<td style="border: 1px solid #000; padding: 4px; text-align: center;">' + (a.kelas_tanding || '-') + '</td>';
+                html += '</tr>';
+            });
+            html += '</tbody></table>';
+            html += '</div>';
+        }
+        
+        html += '<div style="display: flex; justify-content: space-between; margin-bottom: 10px;">';
+        html += '<div style="width: 45%; padding: 10px; background: #ffffcc; border: 2px solid #000; border-radius: 4px;">';
+        html += '<table style="width: 100%; font-size: 10px;">';
+        html += '<tr><td>Jumlah Atlet</td><td style="text-align: right; font-weight: bold;">' + data.atlet.length + '</td></tr>';
+        html += '<tr><td>Biaya/Atlet</td><td style="text-align: right;">Rp ' + PRICE_PER_ATLET.toLocaleString('id-ID') + '</td></tr>';
+        html += '<tr style="border-top: 2px solid #000;"><td style="padding-top: 5px;"><strong>TOTAL</strong></td><td style="text-align: right; padding-top: 5px; font-size: 14px; color: #cc0000;"><strong>Rp ' + data.total.toLocaleString('id-ID') + '</strong></td></tr>';
+        html += '</table>';
+        html += '</div>';
+        
+        html += '<div style="width: 50%; padding: 8px; background: #e6f2ff; border: 2px solid #0066cc; border-radius: 4px; font-size: 10px;">';
+        html += '<strong style="font-size: 11px;">REKENING PEMBAYARAN:</strong><br>';
+        html += '<strong>BRI:</strong> 3029-0108-1857-534<br>';
+        html += '<strong>a.n:</strong> NAFISAH AMALINA';
+        html += '</div>';
+        html += '</div>';
+        
+        html += '<div style="background: #fff3cd; border: 2px solid #ffc107; padding: 10px; border-radius: 4px; margin-bottom: 10px;">';
+        html += '<strong style="color: #856404; font-size: 11px;">BERKAS YANG WAJIB DIBAWA SAAT TM:</strong>';
+        html += '<ul style="font-size: 10px; margin: 4px 0 0 0; padding-left: 18px; color: #666;">';
+        html += '<li>1. SURAT KETERANGAN SEHAT</li>';
+        html += '<li>2. SURAT KETERANGAN SEKOLAH</li>';
+        html += '<li>3. SURAT IZIN ORANG TUA</li>';
+        html += '<li>4. BUKTI TRANSFER</li>';
+        html += '<li>5. BUKTI PENDAFTARAN</li>';
+        html += '<li>Konfirmasi WA: 085713408400 (NA)</li>';
+        html += '</ul>';
+        html += '</div>';
+        
+        html += '<div style="text-align: center; font-size: 8px; color: #999; padding-top: 6px; border-top: 1px solid #ccc;">';
+        html += 'IPSI CUP 3 - Kabupaten Pekalongan 2026 | Created by NAVORA';
+        html += '</div>';
+        html += '</div>';
+        
+        data.kodePembayaran = kodePembayaran;
+        
+        document.getElementById('strukContent').innerHTML = html;
+    }
+    
+    function closeLihatStruk() {
+        document.getElementById('lihatStrukModal').style.display = 'none';
+        currentStruk = null;
+        // Show reminder modal
+        document.getElementById('reminderModal').style.display = 'flex';
+    }
+
+function downloadPDF() {
+    if (!currentStruk) return;
+    var source = document.getElementById("strukContent");
+
+    if (!source || !source.innerText.trim()) {
+        alert("Gagal: struk belum siap. Pastikan struk sudah ditampilkan sebelum download.");
+        return;
+    }
+
+    const opt = {
+        margin:       25.4, // ✅ 2,54 cm = 25.4 mm
+        filename:     "Struk_IPSI_CUP3_" + currentStruk.officialName + ".pdf",
+        image:        { type: "jpeg", quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak:    { mode: ['css', 'legacy'] }
+    };
+
+    html2pdf().set(opt).from(source).toPdf().get('pdf').then(function (pdf) {
+        const totalPages = pdf.internal.getNumberOfPages();
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+
+        for (let i = 1; i <= totalPages; i++) {
+            pdf.setPage(i);
+
+            // Garis tipis dekat footer
+            pdf.setDrawColor(150);
+            pdf.setLineWidth(0.2);
+            pdf.line(25.4, pageHeight - 12, pageWidth - 25.4, pageHeight - 12);
+            
+            // Footer di tengah bawah (benar-benar nempel bawah margin)
+            pdf.setFontSize(8);
+            pdf.text("Halaman " + i + " dari " + totalPages, pageWidth / 2, pageHeight - 6, { align: "center" });
+        }
+    }).save("Struk_IPSI_CUP3_" + currentStruk.officialName + ".pdf");
+}
+    // ==================== REMINDER MODAL ====================
+    function closeReminderModal() {
+        document.getElementById('reminderModal').style.display = 'none';
+    }
+
+    function closeReminderAndGoKonfirmasi() {
+        closeReminderModal();
+        if (!currentUser) {
+            openLoginModal();
+        } else {
+            showPage('page-dashboard');
+            showDashboardSection('konfirmasi-bayar');
+            document.getElementById('paymentCodeInput').value = generatedPaymentCode || '';
+        }
+    }
+
+    // ==================== BUKA STRUK MODAL ====================
+    function openBukaStrukModal() {
+        document.getElementById('bukaStrukModal').style.display = 'flex';
+        document.getElementById('strukCodeInput').focus();
+    }
+
+    function openBukaStrukModalFromDashboard() {
+        openBukaStrukModal();
+    }
+
+    function closeBukaStrukModal() {
+        document.getElementById('bukaStrukModal').style.display = 'none';
+        document.getElementById('strukCodeInput').value = '';
+    }
+
+    function openStrukByCode(e) {
+        e.preventDefault();
+        var code = document.getElementById('strukCodeInput').value.trim().toUpperCase();
+        
+        var riwayat = JSON.parse(localStorage.getItem('riwayat_struk') || '[]');
+        var found = null;
+        
+        for (var i = 0; i < riwayat.length; i++) {
+            if (riwayat[i].paymentCode && riwayat[i].paymentCode.toUpperCase() === code) {
+                found = riwayat[i];
+                break;
+            }
+        }
+        
+        if (found) {
+            currentStruk = found;
+            renderStruk(found);
+            closeBukaStrukModal();
+            document.getElementById('lihatStrukModal').style.display = 'flex';
+        } else {
+            alert('Kode pendaftaran tidak ditemukan! Periksa kembali kode Anda.');
+        }
+    }
+
+    // ==================== KONFIRMASI PEMBAYARAN ====================
+    function confirmPayment(e) {
+        e.preventDefault();
+        var inputCode = document.getElementById('paymentCodeInput').value.trim().toUpperCase();
+        
+        if (!inputCode) {
+            alert('Masukkan kode pendaftaran!');
+            return;
+        }
+        
+        // Flexible search for payment code (partial match)
+        var riwayat = JSON.parse(localStorage.getItem('riwayat_struk') || '[]');
+        var foundIndex = -1;
+        
+        for (var i = 0; i < riwayat.length; i++) {
+            if (riwayat[i].paymentCode && riwayat[i].paymentCode.toUpperCase().includes(inputCode.toUpperCase())) {
+                foundIndex = i;
+                break;
+            }
+        }
+
+
+        
+        // Update status to paid
+        var found = riwayat[foundIndex];
+        if (found.status === 'paid') {
+            alert('Pendaftaran dengan kode ini sudah dikonfirmasi sebelumnya!');
+            return;
+        }
+        
+        found.status = 'paid';
+        riwayat[foundIndex] = found;
+        localStorage.setItem('riwayat_struk', JSON.stringify(riwayat));
+        
+        // Update all athletes with this payment code & refresh total
+        var allAthletes = JSON.parse(localStorage.getItem('all_athletes') || '[]');
+        allAthletes.forEach(function(a) {
+            if (a.payment_code && a.payment_code.toUpperCase() === inputCode) {
+                a.status = 'paid';
+            }
+        });
+        localStorage.setItem('all_athletes', JSON.stringify(allAthletes));
+        
+        // Refresh total registrants display
+        var paidAthletes = allAthletes.filter(a => a.status === 'paid').length;
+        document.getElementById('totalRegistrants').innerHTML = paidAthletes.toLocaleString('id-ID');
+        
+        alert('Kode Pendaftaran dikonfirmasi!\n\nSilahkan Lanjut untuk mengkonfirmasi pembayaran!');
+        
+        document.getElementById('paymentCodeInput').value = '';
+    }
+
+    function openKonfirmasiFromCode(e) {
+        e.preventDefault();
+        var code = document.getElementById('quickPaymentCode').value.trim().toUpperCase();
+        
+        if (!currentUser) {
+            alert('Silakan login terlebih dahulu untuk melakukan konfirmasi pendaftaran.');
+            document.getElementById('quickPaymentCode').value = code;
+            openLoginModal();
+            return;
+        }
+        
+        // Set the code to payment input and go to confirmation
+        document.getElementById('quickPaymentCode').value = '';
+        showPage('page-dashboard');
+        showDashboardSection('konfirmasi-bayar');
+    }
+
+    // ==================== RIWAYAT ====================
+    function openRiwayatModal() {
+        document.getElementById('riwayatModal').style.display = 'flex';
+        renderRiwayat();
+    }
+
+    function closeRiwayatModal() {
+        document.getElementById('riwayatModal').style.display = 'none';
+    }
+
+    function renderRiwayat() {
+        var riwayat = JSON.parse(localStorage.getItem('riwayat_struk') || '[]');
+        var list = document.getElementById('riwayatList');
+        
+        if (riwayat.length === 0) {
+            list.innerHTML = '<p class="text-center text-gray-500 py-8">Belum ada riwayat pendaftaran</p>';
+        } else {
+            var html = '';
+            // Show newest first
+            riwayat.reverse().forEach(function(r, index) {
+                var tanggal = new Date(r.tanggal).toLocaleDateString('id-ID');
+                var statusClass = r.status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+                var statusText = r.status === 'paid' ? 'LUNAS' : 'PENDING';
+                
+                var atletList = r.atlet.map(function(a) { 
+                    return '<li class="text-sm">' + a.name + ' (' + a.category + ' - ' + a.age_group + ')</li>'; 
+                }).join('');
+                
+                html += '<div class="bg-gray-50 p-4 rounded border">';
+                html += '<div class="flex justify-between items-center mb-2">';
+                html += '<div>';
+                html += '<p class="font-bold">' + tanggal + '</p>';
+                html += '<p class="text-xs text-gray-500">Kode: ' + r.paymentCode + '</p>';
+                html += '</div>';
+                html += '<div class="text-right">';
+                html += '<p class="font-bold text-green-600">Rp ' + r.total.toLocaleString('id-ID') + '</p>';
+                html += '<span class="' + statusClass + ' px-2 py-1 rounded text-xs font-bold">' + statusText + '</span>';
+                html += '</div>';
+                html += '</div>';
+                html += '<p class="text-sm"><strong>Official:</strong> ' + r.officialName + ' | <strong>Perguruan:</strong> ' + r.perguruan + '</p>';
+                html += '<ul class="mt-2 ml-4">' + atletList + '</ul>';
+                html += '<div class="mt-3 flex space-x-2">';
+                html += '<button onclick="viewStrukFromRiwayat(\'' + r.paymentCode + '\')" class="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700"><i class="fas fa-eye mr-1"></i> Lihat Bukti Pendaftaran </button>';
+                if (r.status !== 'paid') {
+                    html += '<button onclick="viewStrukAndConfirm(\'' + r.paymentCode + '\')" class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700"><i class="fas fa-check mr-1"></i> Konfirmasi Bayar</button>';
+                }
+                html += '</div>';
+                html += '</div>';
+            });
+            list.innerHTML = html;
+        }
+    }
+
+    function viewStrukFromRiwayat(paymentCode) {
+        var riwayat = JSON.parse(localStorage.getItem('riwayat_struk') || '[]');
+        for (var i = 0; i < riwayat.length; i++) {
+            if (riwayat[i].paymentCode === paymentCode) {
+                currentStruk = riwayat[i];
+                renderStruk(riwayat[i]);
+                closeRiwayatModal();
+                document.getElementById('lihatStrukModal').style.display = 'flex';
+                break;
+            }
+        }
+    }
+
+    function viewStrukAndConfirm(paymentCode) {
+        if (!currentUser) {
+            alert('Silakan login terlebih dahulu!');
+            openLoginModal();
+            return;
+        }
+        
+        viewStrukFromRiwayat(paymentCode);
+        
+        // Set payment code input
+        document.getElementById('paymentCodeInput').value = paymentCode;
+    }
+
+    // ==================== NEWS ====================
+    function switchNewsTab(tab) {
+        // Update button styles
+        document.querySelectorAll('.news-tab-btn').forEach(function(btn) {
+            if (btn.dataset.tab === tab) {
+                btn.classList.remove('bg-gray-200', 'text-gray-800');
+                btn.classList.add('bg-ipsiBlack', 'text-white');
+            } else {
+                btn.classList.remove('bg-ipsiBlack', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-800');
+            }
+        });
+        
+        loadNews(tab);
+    }
+
+    function loadNews(filter) {
+        var news = JSON.parse(localStorage.getItem('news_data') || '[]');
+        allNews = news.sort(function(a, b) {
+            return new Date(b.date) - new Date(a.date);
+        });
+        renderNews(filter || 'semua');
+    }
+
+    function renderNews(filter) {
+        var container = document.getElementById('newsList');
+        
+        var filteredNews = allNews;
+        if (filter && filter !== 'semua') {
+            filteredNews = allNews.filter(function(n) { return n.category === filter; });
+        }
+        
+        if (filteredNews.length === 0) {
+            container.innerHTML = '<p class="col-span-3 text-center text-gray-500 py-8">Belum ada berita</p>';
+            return;
+        }
+        
+        var html = '';
+        filteredNews.forEach(function(n) {
+            var image = n.image || 'https://via.placeholder.com/400x300?text=IPSI+CUP+3';
+            var pdf = n.pdf || '';
+            var categoryBadge = getCategoryBadge(n.category);
+            
+            html += '<div class="bg-white rounded-lg shadow-lg overflow-hidden">';
+            if (pdf) {
+                // Prioritize PDF embed
+                html += '<iframe src="' + pdf + '?embedded=true" class="pdf-embed w-full" title="' + n.title + ' PDF"></iframe>';
+                html += '<div class="p-4 pb-2">';
+            } else {
+                // Image
+                html += '<img src="' + image + '" alt="' + n.title + '" class="w-full h-48 object-cover">';
+                html += '<div class="p-4">';
+            }
+            html += categoryBadge;
+            html += '<p class="text-xs text-gray-500 mb-1">' + new Date(n.date).toLocaleDateString('id-ID') + '</p>';
+            html += '<h3 class="font-bold text-lg mb-2">' + n.title + '</h3>';
+            html += '<p class="text-sm text-gray-600">' + n.content.substring(0, 100) + '...</p>';
+            if (pdf) {
+                html += '<a href="' + pdf + '" target="_blank" class="text-blue-600 hover:underline text-sm block mt-2"><i class="fas fa-external-link-alt mr-1"></i>Lihat PDF Penuh</a>';
+            }
+            html += '</div>';
+            html += '</div>';
+        });
+        container.innerHTML = html;
+    }
+
+function uploadFile(fieldId) {
+        var input = document.getElementById(fieldId);
+        var fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = fieldId === 'newsImage' ? 'image/jpeg,image/jpg,image/png' : 'application/pdf';
+        fileInput.onchange = function(e) {
+            var file = e.target.files[0];
+            if (!file) return;
+            
+            // Client-side validation
+            if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                alert('Ukuran file maksimal 10MB!');
+                return;
+            }
+            
+            // Show file preview for images
+            if (fieldId === 'newsImage' && file.type.startsWith('image/')) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var imgUrl = e.target.result;
+                    // Create temporary preview
+                    var preview = document.createElement('img');
+                    preview.src = imgUrl;
+                    preview.style.cssText = 'max-width: 200px; max-height: 150px; border-radius: 8px; margin-top: 8px;';
+                    input.parentElement.appendChild(preview);
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            var btn = e.target.parentElement ? e.target.parentElement.querySelector('button') : null;
+            var originalText = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Memproses...';
+            }
+            
+            // Generate unique filename with timestamp
+            var timestamp = Date.now();
+            var filename = file.name.split('.')[0] + '_' + timestamp + '.' + file.name.split('.').pop();
+            
+            // Client-side upload simulation - In production, use upload_drive.php or Firebase/Supabase Storage
+            setTimeout(function() {
+                // Simulate Google Drive upload result
+                var simulatedFileId = '1' + timestamp.toString().slice(-10); // Fake ID for demo
+                var url = 'https://drive.google.com/file/d/' + simulatedFileId + '/view?usp=sharing';
+                
+                input.value = url;
+                
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-check mr-1 text-green-500"></i>Berhasil!';
+                    setTimeout(function() {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }, 2000);
+                }
+                
+                alert('? Upload berhasil (simulasi client-side)!\n\nURL simulasi: ' + url + '\n\n*Untuk produksi, buat upload_drive.php atau gunakan Supabase Storage.');
+                
+                // Remove preview after 5s
+                var preview = input.parentElement.querySelector('img');
+                if (preview) {
+                    setTimeout(function() {
+                        preview.remove();
+                    }, 5000);
+                }
+            }, 1500); // Simulate network delay
+            
+        };
+        fileInput.click();
+    }
+
+    function getCategoryBadge(category) {
+
+        var badges = {
+            'poster': '<span class="bg-pink-500 text-white text-xs px-2 py-1 rounded mb-2 inline-block">Poster</span>',
+            'konfirmasi': '<span class="bg-green-500 text-white text-xs px-2 py-1 rounded mb-2 inline-block">Konfirmasi</span>',
+            'bagan': '<span class="bg-purple-500 text-white text-xs px-2 py-1 rounded mb-2 inline-block">Bagan</span>',
+            'proposal': '<span class="bg-orange-500 text-white text-xs px-2 py-1 rounded mb-2 inline-block">Proposal</span>',
+            'umum': '<span class="bg-blue-500 text-white text-xs px-2 py-1 rounded mb-2 inline-block">Umum</span>'
+        };
+        return badges[category] || badges['umum'];
+    }
+
+    function renderNewsTable() {
+        var html = '';
+        allNews.forEach(function(n, i) {
+            var image = n.image || 'https://via.placeholder.com/50x50?text=News';
+            html += '<tr class="border-b">';
+            html += '<td class="p-2"><img src="' + image + '" class="w-12 h-12 object-cover rounded"></td>';
+            html += '<td class="p-2">' + n.title + '</td>';
+            html += '<td class="p-2"><span class="bg-gray-200 px-2 py-1 rounded text-xs">' + (n.category || 'umum') + '</span></td>';
+            html += '<td class="p-2">' + new Date(n.date).toLocaleDateString('id-ID') + '</td>';
+            html += '<td class="p-2">';
+            html += '<button onclick="editNews(' + i + ')" class="text-blue-600 mr-2"><i class="fas fa-edit"></i></button>';
+            html += '<button onclick="deleteNews(' + i + ')" class="text-red-600"><i class="fas fa-trash"></i></button>';
+            html += '</td>';
+            html += '</tr>';
+        });
+        document.getElementById('newsTable').innerHTML = html;
+    }
+
+    function saveNews(e) {
+        e.preventDefault();
+        var newsId = document.getElementById('newsId').value;
+        var newsData = {
+            id: newsId ? parseInt(newsId) : Date.now(),
+            title: document.getElementById('newsTitle').value,
+            category: document.getElementById('newsCategory').value,
+            date: document.getElementById('newsDate').value,
+            content: document.getElementById('newsContent').value,
+            image: document.getElementById('newsImage').value || 'https://via.placeholder.com/400x300',
+            pdf: document.getElementById('newsPdf').value || ''
+        };
+        if (newsId) { allNews[parseInt(newsId)] = newsData; } 
+        else { allNews.push(newsData); }
+        localStorage.setItem('news_data', JSON.stringify(allNews));
+        renderNews(); renderNewsTable(); resetNewsForm();
+        alert('Berita berhasil disimpan!');
+    }
+
+    function editNews(index) {
+        var news = allNews[index];
+        if(news) {
+            document.getElementById('newsId').value = index;
+            document.getElementById('newsTitle').value = news.title;
+            document.getElementById('newsCategory').value = news.category || 'umum';
+            document.getElementById('newsDate').value = news.date;
+            document.getElementById('newsContent').value = news.content;
+            document.getElementById('newsImage').value = news.image || '';
+            document.getElementById('newsPdf').value = news.pdf || '';
+        }
+    }
+
+    function deleteNews(index) {
+        if(confirm('Hapus berita ini?')) {
+            allNews.splice(index, 1);
+            localStorage.setItem('news_data', JSON.stringify(allNews));
+            renderNews(); renderNewsTable();
+        }
+    }
+
+    function resetNewsForm() {
+        document.getElementById('newsForm').reset();
+        document.getElementById('newsId').value = '';
+    }
+
+    // NEW INVOICE FUNCTIONS
+    function openInvoiceModal() {
+        if (!currentUser) {
+            alert('Silakan login terlebih dahulu!');
+            toggleLogin();
+            return;
+        }
+        document.getElementById('invoiceOfficial').textContent = currentUser.name;
+        document.getElementById('invoiceModal').style.display = 'flex';
+        document.getElementById('invoiceNumber').focus();
+    }
+
+    function closeInvoiceModal() {
+        document.getElementById('invoiceModal').style.display = 'none';
+        document.getElementById('invoiceNumber').value = '';
+        document.getElementById('invoiceNote').value = '';
+    }
+
+   function saveInvoice(event) {
+    event.preventDefault();
+    var invoiceNumber = document.getElementById('invoiceNumber').value;
+    var invoiceNote = document.getElementById('invoiceNote').value;
+
+    var athletes = JSON.parse(localStorage.getItem('all_athletes') || '[]');
+
+    if (athletes.length > 0) {
+        var lastAthlete = athletes[athletes.length - 1];
+        lastAthlete.invoice_id = invoiceNumber;   // simpan nomor invoice
+        lastAthlete.invoice_note = invoiceNote;   // simpan catatan
+    }
+
+    localStorage.setItem('all_athletes', JSON.stringify(athletes));
+
+    alert("Sukses, pendaftaran akan segera diverifikasi!");
+    closeInvoiceModal();
+}
+
+    function openAdminPanel() {
+        if (!currentUser || !currentUser.is_admin) {
+            alert('Hanya Admin!');
+            return;
+        }
+        isAdmin = true;
+        document.getElementById('adminModal').style.display = 'flex';
+        updateAdminUI();
+        loadAdminData();
+        loadNews();
+    }
+
+    function closeAdminModal() { 
+        document.getElementById('adminModal').style.display = 'none'; 
+    }
+
+    function switchAdminTab(tab) {
+        // Update active tab button
+        document.querySelectorAll('#adminModal button[onclick*="switchAdminTab"]').forEach(btn => {
+            btn.classList.remove('bg-blue-100', 'text-blue-800');
+            btn.classList.add('bg-gray-100', 'text-gray-800');
+        });
+        event.target.classList.add('bg-blue-100', 'text-blue-800');
+        event.target.classList.remove('bg-gray-100', 'text-gray-800');
+        
+        // Show correct tab
+        if(tab === 'data') {
+            document.getElementById('adminTabData').classList.remove('hidden');
+            document.getElementById('adminTabNews').classList.add('hidden');
+        } else {
+            document.getElementById('adminTabData').classList.add('hidden');
+            document.getElementById('adminTabNews').classList.remove('hidden');
+        }
+    }
+
+    function loadAdminData() {
+        var athletes = JSON.parse(localStorage.getItem('all_athletes') || '[]');
+        if(supabase) {
+            supabase.from('athletes').select('*').then(function(result) {
+                if(result.data && result.data.length > 0) {
+                    var supabaseIds = athletes.map(function(a) { return a.id; });
+                    result.data.forEach(function(a) {
+                        if(!supabaseIds.includes(a.id)) { athletes.push(a); }
+                    });
+                }
+                renderAdminTable(athletes);
+            }).catch(function(e) { renderAdminTable(athletes); });
+        } else { 
+            renderAdminTable(athletes); 
+        }
+    }
+
+    function renderAdminTable(athletes) {
+        var paid = athletes.filter(function(a) { return a.status === 'paid'; });
+        var pending = athletes.filter(function(a) { return a.status !== 'paid'; });
+        document.getElementById('adminTotal').innerHTML = athletes.length;
+        document.getElementById('adminPaid').innerHTML = paid.length;
+        document.getElementById('adminPending').innerHTML = pending.length;
+        document.getElementById('adminRevenue').innerHTML = 'Rp ' + (paid.length * PRICE_PER_ATLET).toLocaleString('id-ID');
+        var html = '';
+        if(athletes.length === 0) { html = '<tr><td colspan="9" class="p-4 text-center">Belum ada data</td></tr>'; }
+        else {
+            athletes.forEach(function(a, i) {
+                var statusClass = a.status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+                var tanggal = a.payment_date ? new Date(a.payment_date).toLocaleDateString('id-ID') : '-';
+                html += '<tr class="border-b">';
+                html += '<td class="p-2">' + (i+1) + '</td>';
+                html += '<td class="p-2">' + a.name + '</td>';
+                html += '<td class="p-2">' + (a.perguruan || '-') + '</td>';
+                html += '<td class="p-2">' + a.category + '</td>';
+                html += '<td class="p-2">' + (a.kelas_tanding || '-') + '</td>';
+                html += '<td class="p-2">' + (a.official_name || '-') + '</td>';
+                html += '<td class="p-2">' + (a.email_official || '-') + '</td>';
+                html += '<td class="p-2"><a href="' + (a.docLink || '#') + '" target="_blank" class="text-blue-600">Link</a></td>'; 
+                html += '<td class="p-2"><span class="' + statusClass + ' px-2 py-1 rounded text-xs">' + a.status + '</span></td>';
+                html += '<td class="p-2">' + tanggal + '</td></tr>';
+            });
+        }
+        document.getElementById('adminTable').innerHTML = html;
+    }
+
+   function exportExcel() {
+    var athletes = JSON.parse(localStorage.getItem('all_athletes') || '[]');
+    if (athletes.length === 0) { 
+        alert('Belum ada data!'); 
+        return; 
+    }
+
+    var excelData = athletes.map(function(a, index) {
+        return {
+            'No': index + 1,
+            'Invoice ID': a.invoice_id || a.official_invoice || '-',
+            'Kode Pendaftaran': a.payment_code || '',
+            'Catatan': a.invoice_note || '',   // kolom baru untuk catatan            'Nama Atlet': a.name || '',
+            'TTL': a.ttl || '',
+            'JK': a.gender || '',
+            'Kategori': a.category || '',
+            'Kel. Umur': a.age_group || '',
+            'Kelas': a.kelas_tanding || '-',
+            'Sekolah': a.school || '',
+            'NISN': a.nisn || '',
+            'Kelas Sekolah': a.kelas || '',
+            'NIK': a.nik || '',
+            'BB': a.bb || '',
+            'TB': a.tb || '',
+            'Link Dokumen': a.docLink || '',
+            'Official': a.official_name || '',
+            'Email Official': a.email_official || '',
+            'Perguruan': a.perguruan || '',
+            'Status': a.status || 'pending',
+            'Tanggal': a.payment_date 
+                ? new Date(a.payment_date).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) 
+                : '-'
+        };
+    });
+
+    var ws = XLSX.utils.json_to_sheet(excelData);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Data Atlet");
+
+    var fileName = "Data_IPSI_CUP_3_" + new Date().toISOString().split('T')[0] + ".xlsx";
+    XLSX.writeFile(wb, fileName);
+}
+
+    function printAdmin() { window.print(); }
+
+    function startCountdown() {
+        var target = new Date('2026-04-11T15:00:00+07:00').getTime();
+        setInterval(function() {
+            var now = new Date().getTime();
+            var distance = target - now;
+            if(distance < 0) {
+                document.getElementById('days').innerHTML = '00';
+                document.getElementById('hours').innerHTML = '00';
+                document.getElementById('minutes').innerHTML = '00';
+                document.getElementById('seconds').innerHTML = '00';
+                return;
+            }
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            document.getElementById('days').innerHTML = String(days).padStart(2, '0');
+            document.getElementById('hours').innerHTML = String(hours).padStart(2, '0');
+            document.getElementById('minutes').innerHTML = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').innerHTML = String(seconds).padStart(2, '0');
+        }, 1000);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        startCountdown();
+        checkAuth();
+        toggleFisik();
+        var activityEvents = ['mousedown', 'keydown', 'scroll', 'touchstart'];
+        activityEvents.forEach(function(event) {
+            document.addEventListener(event, function() { resetSessionTimer(); }, { passive: true });
+        });
+    });
+    </script>
+</body>
+</html>

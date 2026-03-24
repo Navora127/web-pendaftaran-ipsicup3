@@ -1,0 +1,42 @@
+# Git ignore untuk NAVORA IPSI Project
+
+# Dependencies
+vendor/
+node_modules/
+composer.lock
+
+# Credentials & Secrets
+service-account.json*
+service-account.json.json
+*.key
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+/dist
+/.next
+/build
+/uploads/*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Local storage / browser data
+localStorage data (manual cleanup)
+
+# Temp files
+*.tmp
+*.temp
